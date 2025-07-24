@@ -316,3 +316,21 @@ def get_status():
         }
     }
 
+
+if __name__ == "__main__":
+    import uvicorn
+
+    print("🚀 Starting FastAPI server on port 8001...")
+    print("📍 Server will be available at: http://localhost:8001")
+    print("📖 API documentation available at: http://localhost:8001/docs")
+    print("🔄 Press Ctrl+C to stop the server")
+
+    # Run the server on port 8001
+    uvicorn.run(
+        "app:app",  # Use import string for reload to work properly
+        host="0.0.0.0",
+        port=8001,
+        reload=True,  # Enable auto-reload for development
+        log_level="info"
+    )
+
