@@ -1,0 +1,53 @@
+/* Dark mode styles that apply across the entire application */
+
+.dark {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+.dark .MuiPaper-root {
+  background-color: #1e1e1e;
+}
+
+.dark .MuiIconButton-root {
+  color: #f5f5f5;
+}
+
+.dark .MuiTypography-root {
+  color: #f5f5f5;
+}
+
+.dark .MuiTypography-colorTextSecondary {
+  color: #aaaaaa;
+}
+
+.dark .MuiDivider-root {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .MuiTooltip-tooltip {
+  background-color: #333;
+}
+
+/* Ensure text inputs have proper contrast in dark mode */
+.dark .MuiInputBase-input {
+  color: #f5f5f5;
+}
+
+.dark .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.23);
+}
+
+/* Ensure buttons have proper styling in dark mode */
+.dark .MuiButton-outlined {
+  border-color: rgba(255, 255, 255, 0.23);
+}
+
+.dark .MuiButton-contained {
+  background-color: #4ade80;
+  color: #121212;
+}
+
+.dark .MuiButton-text {
+  color: #4ade80;
+}

@@ -1,0 +1,67 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# FastAPI/Starlette cache and reload files
+*.db
+*.log
+*.pid
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Testing
+htmlcov/
+.tox/
+.nox/
+.coverage
+coverage.xml
+pytest_cache/
+.cache/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Environments
+.env
+.env.*
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# SQLite and local DBs
+*.sqlite3
+
+# MacOS files
+.DS_Store
+
+# Docker
+*.pid
+*.tar
+*.bak
+
+# Node stuff (if frontend in same repo)
+node_modules/
+
+# Other
+*.swp
