@@ -4,15 +4,17 @@ from pathlib import Path
 import os
 import time
 
+
 INSIGHT_PROMPT = """
 You are a senior data analyst. Based on the following markdown table content, generate exactly five concise insights as a raw JSON array of strings.
+You must be fully accurate with dates, figures, and trends — no assumptions or extrapolations.
 
 Instructions:
-
-- Each insight must highlight patterns, trends, gaps, or performance observations based strictly on the data.
-- Use precise and direct language; avoid filler phrases like "The data shows".
-- Do not use keys like "insight" or wrap results in objects — only return a JSON array of 5 plain strings.
-- If the table has no usable data, return exactly: ["No data available", "No data available", "No data available", "No data available", "No data available"]
+- The table contains monthly data in left-to-right order from January to June. Use exact month names from the table when describing trends or numbers.
+- Do NOT infer trends beyond June, and do NOT confuse column positions or assume patterns.
+- Each insight must highlight patterns, trends, gaps, or performance observations strictly from the actual data.
+- Use clear, factual, and precise language — avoid vague phrases like "the data shows" or "it can be seen".
+- Do NOT include object wrappers or labels like "insight"; only return a plain JSON array of 5 strings.
 
 Only return the JSON array — no markdown, no formatting, no explanations.
 

@@ -8,7 +8,7 @@ import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import openpyxl
 import time
-
+from sheet_insights.dashboard import extract_insight_data
 from sheet_insights.parser import extract_markdown, get_sheet_names
 from sheet_insights.insights import get_insights
 from sheet_insights.general_summary import generate_general_insights
@@ -29,10 +29,13 @@ UPLOAD_DIR = Path('uploads')
 MARKDOWN_DIR = Path("results/markdown_output")
 INSIGHTS_FILE = Path('results/insights.json')
 GENERAL_INSIGHTS_FILE = Path('results/general-info.json')
+DASHBOARD_FILE = Path('results/dashboard.json')
 ADDITIONAL_INSIGHTS_FILE = Path('results/additional-insights.json')
 RESULTS_DIR = Path('results')
+OUTPUT_JSON = Path("results/dashboard.json")
+uploaded_file = next(Path(UPLOAD_DIR).glob("*.xlsx"))
 
-# Create directories
+
 for folder in [UPLOAD_DIR, MARKDOWN_DIR, RESULTS_DIR]:
     folder.mkdir(parents=True, exist_ok=True)
 
@@ -175,6 +178,8 @@ async def upload_excel(file: UploadFile = File(...)):
         with open(INSIGHTS_FILE, "r", encoding="utf-8") as f:
             insights_content = json.load(f)
 
+        extract_insight_data(uploaded_file, "results/dashboard.json")
+
         print(f"🎉 Processing completed successfully!")
 
         return {
@@ -187,6 +192,9 @@ async def upload_excel(file: UploadFile = File(...)):
     except Exception as e:
         print(f"❌ Error during processing: {e}")
         raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
+    
+
+
 
 @app.get('/download/insights')
 def download_insights():
@@ -200,11 +208,16 @@ def download_general():
         raise HTTPException(status_code=404, detail='General info file not found')
     return FileResponse(path=GENERAL_INSIGHTS_FILE, filename='general-info.json', media_type='application/json')
 
+@app.get('/download/dashboard_file')
+def download_general():
+    if not GENERAL_INSIGHTS_FILE.exists():
+        raise HTTPException(status_code=404, detail='General info file not found')
+    return FileResponse(path=GENERAL_INSIGHTS_FILE, filename='dashboard.json', media_type='application/json')
+
 @app.post('/generate_more_insights')
 def generate_more_insights():
     """Generate additional insights based on data not covered in previous insights"""
     try:
-        # Check if required files exist
         if not INSIGHTS_FILE.exists():
             raise HTTPException(status_code=404, detail='Insights file not found. Please upload and process an Excel file first.')
 
@@ -213,7 +226,6 @@ def generate_more_insights():
 
         print(f"🔄 Generating additional insights...")
 
-        # Generate additional insights
         additional_insights = generate_additional_insights(
             str(INSIGHTS_FILE),
             str(GENERAL_INSIGHTS_FILE),
@@ -305,9 +317,6 @@ def get_all_insights():
 def get_status():
     """Get processing status and available files"""
     return {
-        "insights_available": INSIGHTS_FILE.exists(),
-        "general_insights_available": GENERAL_INSIGHTS_FILE.exists(),
-        "additional_insights_available": ADDITIONAL_INSIGHTS_FILE.exists(),
         "markdown_files": len(list(MARKDOWN_DIR.glob("*.md"))) if MARKDOWN_DIR.exists() else 0,
         "performance_optimizations": {
             "llamaparse_workers": 4,

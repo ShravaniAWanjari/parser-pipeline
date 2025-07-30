@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // const API_URL = "http://13.51.171.153:5000";
-// const API_URL = "http://localhost:8001";
-const API_URL = "http://16.170.98.127:8001";
+const API_URL = "http://localhost:8001";
+// const API_URL = "http://16.170.98.127:8001";
 
 const api = {
   // Health check
