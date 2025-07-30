@@ -1,0 +1,190 @@
+{
+  "generatedOn": "2025-07-30",
+  "kpiMetadata": {
+    "unitDescriptions": {
+      "accidents": "nos",
+      "productionLossHrs": "hrs",
+      "okDeliveryPercent": "%",
+      "trips": "nos",
+      "quantityShipped": "nos",
+      "partsPerTrip": "nos",
+      "vehicleTAT": "hrs",
+      "machineDowntimeHrs": "hrs",
+      "machineBreakdowns": "nos",
+      "onTimeDeliveryRate": "%",
+      "capaClosureDays": "days",
+      "costPerPart": "INR",
+      "supplierContributionPercent": "%"
+    }
+  },
+  "suppliers": [
+    {
+      "name": "Acute_Wiring",
+      "location": "TACO-AI/ TATA-FICOSA/ TACO-EV/ TACO-PRESTOLITE Name of Supplier Partner: Acute Harness Technologies",
+      "buyer": "Mr. Manohar Datt SPOC: Mr. Ganesh Kotwal",
+      "spoc": "Mr. Ganesh Kotwal",
+      "kpis": []
+    },
+    {
+      "name": "Acute_Wiring_1",
+      "location": "TACO-AI/ TATA-FICOSA/ TACO-EV/ TACO-PRESTOLITE Name of Supplier Partner: Acute Harness Technologies",
+      "buyer": "Mr. Manohar Datt SPOC: Mr. Ganesh Kotwal",
+      "spoc": "Mr. Ganesh Kotwal",
+      "kpis": []
+    },
+    {
+      "name": "Ankita_Auto",
+      "location": "Ranjangaon Name of Supplier Partner: Ankita Autocoters",
+      "buyer": "Mr. Mahesh shirsagar SPOC: Mr. Rohan Dhamale",
+      "spoc": "Mr. Rohan Dhamale",
+      "kpis": []
+    },
+    {
+      "name": "Ankita_Auto_1",
+      "location": "Ranjangaon Name of Supplier Partner: Ankita Autocoters",
+      "buyer": "Mr. Mahesh shirsagar SPOC: Mr. Rohan Dhamale",
+      "spoc": "Mr. Rohan Dhamale",
+      "kpis": []
+    },
+    {
+      "name": "CAM",
+      "location": "CHAKAN Name of Supplier Partner:  CAM TOOLS INDUSTRIES PVT. LTD.",
+      "buyer": "Mr. SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "CAM_1",
+      "location": "CHAKAN Name of Supplier Partner:  CAM TOOLS INDUSTRIES PVT. LTD.",
+      "buyer": "Mr. SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "Daxter",
+      "location": "Chinchwad 01 Name of Supplier Partner: Daxter Polymers",
+      "buyer": "Mr. Pawan Patil SPOC: Mr. Pankaj Panda",
+      "spoc": "Mr. Pankaj Panda",
+      "kpis": []
+    },
+    {
+      "name": "Daxter_1",
+      "location": "Chinchwad 01 Name of Supplier Partner: Daxter Polymers",
+      "buyer": "Mr. Pawan Patil SPOC: Mr. Pankaj Panda",
+      "spoc": "Mr. Pankaj Panda",
+      "kpis": []
+    },
+    {
+      "name": "JJ_Tecnoplast",
+      "location": "",
+      "buyer": "Mr.  Nilesh Wankhede SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "JJ_Tecnoplast_1",
+      "location": "",
+      "buyer": "Mr.  Nilesh Wankhede SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "Kamal",
+      "location": "TM CHAKAN & CHINCHWAD Name of Supplier Partner:  lokesh sir ( kamal tools& die)",
+      "buyer": "Mr. Avinash vadhane sir / Akash sir shrikrushna shinde (KTD) - 2025",
+      "spoc": "",
+      "kpis": []
+    },
+    {
+      "name": "Kamal_1",
+      "location": "TM CHAKAN & CHINCHWAD Name of Supplier Partner:  lokesh sir ( kamal tools& die)",
+      "buyer": "Mr. Avinash vadhane sir / Akash sir shrikrushna shinde (KTD) - 2025",
+      "spoc": "",
+      "kpis": []
+    },
+    {
+      "name": "Laxmi_SPRINGS",
+      "location": "Name of Supplier Partner:",
+      "buyer": "Mr.AMBANA KUMAR SPOC: Mr.SWAPNIL BORHADE",
+      "spoc": "Mr.SWAPNIL BORHADE",
+      "kpis": []
+    },
+    {
+      "name": "Laxmi_SPRINGS_1",
+      "location": "Name of Supplier Partner:",
+      "buyer": "Mr.AMBANA KUMAR SPOC: Mr.SWAPNIL BORHADE",
+      "spoc": "Mr.SWAPNIL BORHADE",
+      "kpis": []
+    },
+    {
+      "name": "Makarjyothi",
+      "location": "Name of Supplier Partner:  Makarjyothi Polymers Pvt Ltd",
+      "buyer": "Mr. Sachin Gadekar SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "Makarjyothi_1",
+      "location": "Name of Supplier Partner:  Makarjyothi Polymers Pvt Ltd",
+      "buyer": "Mr. Sachin Gadekar SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "Shree_Stamping",
+      "location": "Name of Supplier Partner:",
+      "buyer": "Mr. SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "Shree_Stamping_1",
+      "location": "Name of Supplier Partner:",
+      "buyer": "Mr. SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "S_B_Precision_Springs",
+      "location": "Tata Ficosa Name of Supplier Partner: S. B. Precision Springs",
+      "buyer": "Mr. Rajesh Joshi SPOC: Mr. Niranjan .B. Shinde",
+      "spoc": "Mr. Niranjan .B. Shinde",
+      "kpis": []
+    },
+    {
+      "name": "S_B_Precision_Springs_1",
+      "location": "Tata Ficosa Name of Supplier Partner: S. B. Precision Springs",
+      "buyer": "Mr. Rajesh Joshi SPOC: Mr. Niranjan .B. Shinde",
+      "spoc": "Mr. Niranjan .B. Shinde",
+      "kpis": []
+    },
+    {
+      "name": "Unique_Systems",
+      "location": "Name of Supplier Partner: Unique Systems And Engineering",
+      "buyer": "Mr. SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "Unique_Systems_1",
+      "location": "Name of Supplier Partner: Unique Systems And Engineering",
+      "buyer": "Mr. SPOC: Mr.",
+      "spoc": "Mr.",
+      "kpis": []
+    },
+    {
+      "name": "Victor_Engineers_ASAL",
+      "location": "Asal ,sanand Name of Supplier Partner: Vector Engineers , Sanand",
+      "buyer": "Mr. Himanshu Sir SPOC: Mr.  Nitin Borase & CFT",
+      "spoc": "Mr.  Nitin Borase & CFT",
+      "kpis": []
+    },
+    {
+      "name": "Victor_Engineers_ASAL_1",
+      "location": "Asal ,sanand Name of Supplier Partner: Vector Engineers , Sanand",
+      "buyer": "Mr. Himanshu Sir SPOC: Mr.  Nitin Borase & CFT",
+      "spoc": "Mr.  Nitin Borase & CFT",
+      "kpis": []
+    }
+  ]
+}
