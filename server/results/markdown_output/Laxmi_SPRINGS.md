@@ -1,19 +1,17 @@
-## Laxmi SPRINGS - Supplier Partner Performance Matrix
-
-- Supplier Partner Performance Matrix
-- Tata AutoComp Business Unit: Name of Supplier Partner:
-- Buyer: Mr.AMBANA KUMAR SPOC: Mr.SWAPNIL BORHADE
-- Sr No Parameters Frequency of rating (M / Q) Rating Responsible person Remarks
-- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec Average
-
-| 1 | Safety- Accident data |  |  | nos |  |  |  | 0 | 0 | 0 |  |  |  |  |  |  | =AVERAGE(F6:Q6) |  |  |
+## Laxmi SPRINGS
+| Supplier Partner Performance Matrix | Unnamed: 1 | Unnamed: 2 | Unnamed: 3 | Unnamed: 4 | Unnamed: 5 | Unnamed: 6 | Unnamed: 7 | Unnamed: 8 | Unnamed: 9 | Unnamed: 10 | Unnamed: 11 | Unnamed: 12 | Unnamed: 13 | Unnamed: 14 | Unnamed: 15 | Unnamed: 16 | Unnamed: 17 | Unnamed: 18 | Unnamed: 19 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2 | Production loss due to Material shortage |  |  | Hrs |  |  |  | 0 | 0 | 0 |  |  |  |  |  |  | =AVERAGE(F7:Q7) |  |  |
-| 3 | OK delivery cycles- as per delivery calculation sheet of ACMA (%) |  |  | % |  |  |  | 97.54 | 100 | 100 |  |  |  |  |  |  | =AVERAGE(F8:Q8) |  |  |
-| 4 | Number of trips / month |  |  | nos |  |  |  | 24 | 25 | 21 |  |  |  |  |  |  | =AVERAGE(F9:Q9) |  |  |
-| 5 | Qty Shipped / month |  |  | nos |  |  |  | 13330 | 10018 | 12450 |  |  |  |  |  |  | =AVERAGE(F10:Q10) |  |  |
-| 6 | No of Parts/ Trip |  |  | nos |  |  |  | =I10/I9 | =J10/J9 | =K10/K9 |  |  |  |  |  |  | =AVERAGE(F11:Q11) |  |  |
-| 7 | Vehicle turnaround time |  |  | Hrs |  |  |  | 1.75 | 1.85 | 1.47 |  |  |  |  |  |  | =AVERAGE(F12:Q12) |  |  |
-| 8 | Machin break down Hrs |  |  | Hrs |  |  |  | 0 | 0 | 0 |  |  |  |  |  |  | =AVERAGE(F13:Q13) |  |  |
-| 9 | No of Machines breakdown |  |  | nos |  |  |  | 0 | 0 | 0 |  |  |  |  |  |  | =AVERAGE(F14:Q14) |  |  |
-| Notes:  1) 2) 3) |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Tata AutoComp Business Unit: | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Name of Supplier Partner: | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| Buyer: Mr.AMBANA KUMAR | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | SPOC: Mr.SWAPNIL BORHADE | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| Sr No | Parameters | NaN | NaN | Frequency of rating (M / Q) | Rating | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Responsible person | Remarks |
+| NaN | NaN | NaN | NaN | NaN | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec | Average | NaN | NaN |
+| 1 | Safety- Accident data | NaN | NaN | nos | NaN | NaN | NaN | 0 | 0 | 0 | NaN | NaN | NaN | NaN | NaN | NaN | 0 | NaN | NaN |
+| 2 | Production loss due to Material shortage | NaN | NaN | Hrs | NaN | NaN | NaN | 0 | 0 | 0 | NaN | NaN | NaN | NaN | NaN | NaN | 0 | NaN | NaN |
+| 3 | OK delivery cycles- as per delivery calculation sheet of ACMA (%) | NaN | NaN | % | NaN | NaN | NaN | 97.54 | 100 | 100 | NaN | NaN | NaN | NaN | NaN | NaN | 99.18 | NaN | NaN |
+| 4 | Number of trips / month | NaN | NaN | nos | NaN | NaN | NaN | 24 | 25 | 21 | NaN | NaN | NaN | NaN | NaN | NaN | 23.333333 | NaN | NaN |
+| 5 | Qty Shipped / month | NaN | NaN | nos | NaN | NaN | NaN | 13330 | 10018 | 12450 | NaN | NaN | NaN | NaN | NaN | NaN | 11932.666667 | NaN | NaN |
+| 6 | No of Parts/ Trip | NaN | NaN | nos | NaN | NaN | NaN | 555.416667 | 400.72 | 592.857143 | NaN | NaN | NaN | NaN | NaN | NaN | 516.33127 | NaN | NaN |
+| 7 | Vehicle turnaround time | NaN | NaN | Hrs | NaN | NaN | NaN | 1.75 | 1.85 | 1.47 | NaN | NaN | NaN | NaN | NaN | NaN | 1.69 | NaN | NaN |
+| 8 | Machin break down Hrs | NaN | NaN | Hrs | NaN | NaN | NaN | 0 | 0 | 0 | NaN | NaN | NaN | NaN | NaN | NaN | 0 | NaN | NaN |
+| 9 | No of Machines breakdown | NaN | NaN | nos | NaN | NaN | NaN | 0 | 0 | 0 | NaN | NaN | NaN | NaN | NaN | NaN | 0 | NaN | NaN |
+| Notes: \n1)\n2)\n3) | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |

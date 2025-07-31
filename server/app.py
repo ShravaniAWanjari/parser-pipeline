@@ -29,7 +29,6 @@ UPLOAD_DIR = Path('uploads')
 MARKDOWN_DIR = Path("results/markdown_output")
 INSIGHTS_FILE = Path('results/insights.json')
 GENERAL_INSIGHTS_FILE = Path('results/general-info.json')
-DASHBOARD_FILE = Path('results/dashboard.json')
 ADDITIONAL_INSIGHTS_FILE = Path('results/additional-insights.json')
 RESULTS_DIR = Path('results')
 OUTPUT_JSON = Path("results/final_supplier_kpis.json")
@@ -188,11 +187,11 @@ async def upload_excel(file: UploadFile = File(...)):
         print(f"❌ Error during processing: {e}")
         raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
 
-@app.get('/download/dashboard_file')
+@app.get('/download/supplier_kpi_file')
 def download_general():
-    if not DASHBOARD_FILE.exists():
-        raise HTTPException(status_code=404, detail='General info file not found')
-    return FileResponse(path=DASHBOARD_FILE, filename='dashboard.json', media_type='application/json')
+    if not OUTPUT_JSON.exists():
+        raise HTTPException(status_code=404, detail='KPI file not generated')
+    return FileResponse(path=OUTPUT_JSON, filename='supplier_kpi.json', media_type='application/json')
 
 
 

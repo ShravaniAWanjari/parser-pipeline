@@ -1,19 +1,17 @@
-## CAM - Supplier Partner Performance Matrix
-
-- Supplier Partner Performance Matrix
-- Tata AutoComp Business Unit: CHAKAN Name of Supplier Partner:  CAM TOOLS INDUSTRIES PVT. LTD.
-- Buyer: Mr. SPOC: Mr.
-- Sr No Parameters Unit Rating  Responsible person Remarks
-- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec Average  
-
-| 1 | Safety- Accident data |  |  | nos |  | ='[1]02 PM'!$AK$9 | ='[1]03 PM'!$AI$9 | ='[1]04 PM'!$AK$9 | ='[1]05 PM'!$AK$9 | ='[2]05 PM'!$AK$9 |  |  |  |  |  |  | =AVERAGE(F6:Q6) |  |  |  |
+## CAM
+| Supplier Partner Performance Matrix | Unnamed: 1 | Unnamed: 2 | Unnamed: 3 | Unnamed: 4 | Unnamed: 5 | Unnamed: 6 | Unnamed: 7 | Unnamed: 8 | Unnamed: 9 | Unnamed: 10 | Unnamed: 11 | Unnamed: 12 | Unnamed: 13 | Unnamed: 14 | Unnamed: 15 | Unnamed: 16 | Unnamed: 17 | Unnamed: 18 | Unnamed: 19 | Unnamed: 20 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2 | Production loss due to Material shortage |  |  | Hrs |  | ='[1]02 PM'!$AK$14 | ='[1]03 PM'!$AI$14 | ='[1]04 PM'!$AK$14 | ='[1]05 PM'!$AK$14 | ='[2]05 PM'!$AK$9 |  |  |  |  |  |  | =AVERAGE(F7:Q7) |  |  | overall |
-| 3 | OK delivery cycles- as per delivery calculation sheet of ACMA (%) |  |  | % |  | 59 | 56 | 54 | 54 | 80 |  |  |  |  |  |  | =AVERAGE(F8:Q8) |  |  |  |
-| 4 | Number of trips / month |  |  | nos |  | ='[1]02 PM'!$AK$17 | ='[1]03 PM'!$AI$17 | ='[1]04 PM'!$AK$17 | ='[1]05 PM'!$AK$17 | 19 |  |  |  |  |  |  | =AVERAGE(F9:Q9) |  |  |  |
-| 5 | Qty Shipped / month |  |  | nos |  | 26749 | 18134 | 8796 | 13048 | 13899 |  |  |  |  |  |  | =AVERAGE(F10:Q10) |  |  |  |
-| 6 | No of Parts/ Trip |  |  | nos |  | =G10/G9 | =H10/H9 | =I10/I9 | =J10/J9 | =K10/K9 |  |  |  |  |  |  | =AVERAGE(F11:Q11) |  |  |  |
-| 7 | Vehicle turnaround time |  |  | Hrs |  | ='[1]02 PM'!$AK$20 | ='[1]03 PM'!$AI$20 | ='[1]04 PM'!$AK$20 | ='[1]05 PM'!$AK$20 | ='[2]06 PM'!AJ20 |  |  |  |  |  |  | =AVERAGE(F12:Q12) |  |  |  |
-| 8 | Machin break down Hrs |  |  | Hrs |  | ='[1]02 PM'!$AK$21 | ='[1]03 PM'!$AI$21 | ='[1]04 PM'!$AK$21 | ='[1]05 PM'!$AK$21 | ='[2]06 PM'!AJ21 |  |  |  |  |  |  | =AVERAGE(F13:Q13) |  |  | overall |
-| 9 | No of Machines breakdown |  |  | nos |  | ='[1]02 PM'!$AK$22 | ='[1]03 PM'!$AI$22 | ='[1]04 PM'!$AK$22 | ='[1]05 PM'!$AK$22 | ='[2]06 PM'!AJ22 |  |  |  |  |  |  | =AVERAGE(F14:Q14) |  |  | overall |
-| Notes: 1) 2) 3) |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Tata AutoComp Business Unit: CHAKAN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Name of Supplier Partner: CAM TOOLS INDUSTRIES PVT. LTD. | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| Buyer: Mr. | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | SPOC: Mr. | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| Sr No | Parameters | NaN | NaN | Unit | Rating | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |  | Responsible person | Remarks | NaN |
+| NaN | NaN | NaN | NaN | NaN | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec | Average |  |  | NaN |
+| 1 | Safety- Accident data | NaN | NaN | nos | NaN | 0 | 2 | 1 | 0 | 0 |  |  |  |  |  |  | 0.6 |  |  | NaN |
+| 2 | Production loss due to Material shortage | NaN | NaN | Hrs |  | 0 | 0 | 0 | 0 | 0 |  |  |  |  |  |  | 0 |  |  | overall |
+| 3 | OK delivery cycles- as per delivery calculation sheet of ACMA (%) | NaN | NaN | % |  | 59 | 56 | 54 | 54 | 80 |  |  |  |  |  |  | 60.6 |  |  | NaN |
+| 4 | Number of trips / month | NaN | NaN | nos |  | 26 | 23 | 25 | 20 | 19 |  |  |  |  |  |  | 22.6 |  |  | NaN |
+| 5 | Qty Shipped / month | NaN | NaN | nos |  | 26749 | 18134 | 8796 | 13048 | 13899 |  |  |  |  |  |  | 16125.2 |  |  | NaN |
+| 6 | No of Parts/ Trip | NaN | NaN | nos | NaN | 1028.807692 | 788.434783 | 351.84 | 652.4 | 731.526316 | NaN | NaN | NaN | NaN | NaN | NaN | 710.601758 |  |  | NaN |
+| 7 | Vehicle turnaround time | NaN | NaN | Hrs |  | 0 | 1.5 | 1.26 | 1.265217 | 1.083333 |  |  |  |  |  |  | 1.02171 |  |  | NaN |
+| 8 | Machin break down Hrs | NaN | NaN | Hrs |  | 0 | 0 | 0 | 3.5 | 1.5 |  |  |  |  |  |  | 1 |  |  | overall |
+| 9 | No of Machines breakdown | NaN | NaN | nos |  | 0 | 0 | 0 | 2 | 1 |  |  |  |  |  |  | 0.6 |  |  | overall |
+| Notes:\n1)\n2)\n3) | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |

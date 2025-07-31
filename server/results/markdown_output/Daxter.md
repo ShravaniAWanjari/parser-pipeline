@@ -1,21 +1,17 @@
-## Daxter - Supplier Partner Performance Matrix
-
-- Supplier Partner Performance Matrix
-- Tata AutoComp Business Unit: Chinchwad 01 Name of Supplier Partner: Daxter Polymers
-- Buyer: Mr. Pawan Patil SPOC: Mr. Pankaj Panda
-- Sr No Parameters Unit Rating Responsible person Remarks
-- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec Average
-
-| 1 | Safety- Accident data |  |  | nos |  | 0 | 0 | 0 | 0 | 0 |  |  |  |  |  |  | =AVERAGE(F6:Q6) | Pankaj Panda |  |  |  |  |  |  |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2 | Production loss due to Material shortage at TACO |  |  | Hrs |  | 0 | 0 | 0 | 0 | 0 |  |  |  |  |  |  | =AVERAGE(F7:Q7) | Pradeep Pore |  |  |  |  |  |  |
-| 3 | OK delivery cycles- as per delivery calculation sheet of ACMA (%) |  |  | % |  | 82 | 89 | 97 | 95.65 | 88 |  |  |  |  |  |  | =AVERAGE(F8:Q8) | Pankaj Kasara |  |  |  |  |  |  |
-| 4 | Number of trips / month |  |  | nos |  | 75 | 69 | 48 | 49 | 51 |  |  |  |  |  |  | =AVERAGE(F9:Q9) | Pankaj Kasara |  |  |  |  |  |  |
-| 5 | Qty Shipped / month |  |  | nos |  | 24369 | 24653 | 25638 | 30342 | 26383 |  |  |  |  |  |  | =AVERAGE(F10:Q10) | Pankaj Kasara |  |  |  |  |  |  |
-| 6 | No of Parts/ Trip |  |  | nos |  | =G10/G9 | =H10/H9 | =I10/I9 | =J10/J9 | =K10/K9 |  |  |  |  |  |  | =AVERAGE(F11:Q11) | Pankaj Kasara |  |  |  |  |  |  |
-| 7 | Vehicle turnaround time (Daxter to TACO and Back) |  |  | Hrs |  | 6 | 6 | 6.16 | 6.4 | 6.8 |  |  |  |  |  |  | =AVERAGE(F12:Q12) | Pankaj Kasara |  |  |  |  |  |  |
-| 8 | Machin break down Hrs |  |  | Hrs |  | 0 | 0 | 0 | 0 | 0 |  |  |  |  |  |  | =AVERAGE(F13:Q13) | Anil Patil |  |  |  |  |  |  |
-| 9 | No of Machines breakdown |  |  | nos |  | 0 | 0 | 0 | 0 | 0 |  |  |  |  |  |  | =AVERAGE(F14:Q14) | Anil Patil |  |  |  |  |  |  |
-| Notes:  1) 2) 3) |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+## Daxter
+| Supplier Partner Performance Matrix | Unnamed: 1 | Unnamed: 2 | Unnamed: 3 | Unnamed: 4 | Unnamed: 5 | Unnamed: 6 | Unnamed: 7 | Unnamed: 8 | Unnamed: 9 | Unnamed: 10 | Unnamed: 11 | Unnamed: 12 | Unnamed: 13 | Unnamed: 14 | Unnamed: 15 | Unnamed: 16 | Unnamed: 17 | Unnamed: 18 | Unnamed: 19 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Tata AutoComp Business Unit: Chinchwad 01 | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Name of Supplier Partner: Daxter Polymers | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| Buyer: Mr. Pawan Patil | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | SPOC: Mr. Pankaj Panda | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |
+| Sr No | Parameters | NaN | NaN | Unit | Rating | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Responsible person | Remarks |
+| NaN | NaN | NaN | NaN | NaN | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec | Average | NaN | NaN |
+| 1 | Safety- Accident data | NaN | NaN | nos | NaN | 0 | 0 | 0 | 0 | 0 | NaN | NaN | NaN | NaN | NaN | NaN | 0 | Pankaj Panda | NaN |
+| 2 | Production loss due to Material shortage at TACO | NaN | NaN | Hrs | NaN | 0 | 0 | 0 | 0 | 0 | NaN | NaN | NaN | NaN | NaN | NaN | 0 | Pradeep Pore | NaN |
+| 3 | OK delivery cycles- as per delivery calculation sheet of ACMA (%) | NaN | NaN | % | NaN | 82 | 89 | 97 | 95.65 | 88 | NaN | NaN | NaN | NaN | NaN | NaN | 90.33 | Pankaj Kasara | NaN |
+| 4 | Number of trips / month | NaN | NaN | nos | NaN | 75 | 69 | 48 | 49 | 51 | NaN | NaN | NaN | NaN | NaN | NaN | 58.4 | Pankaj Kasara | NaN |
+| 5 | Qty Shipped / month | NaN | NaN | nos | NaN | 24369 | 24653 | 25638 | 30342 | 26383 | NaN | NaN | NaN | NaN | NaN | NaN | 26277 | Pankaj Kasara | NaN |
+| 6 | No of Parts/ Trip | NaN | NaN | nos | NaN | 324.92 | 357.289855 | 534.125 | 619.22449 | 517.313725 | NaN | NaN | NaN | NaN | NaN | NaN | 470.574614 | Pankaj Kasara | NaN |
+| 7 | Vehicle turnaround time\n(Daxter to TACO and Back) | NaN | NaN | Hrs | NaN | 6 | 6 | 6.16 | 6.4 | 6.8 | NaN | NaN | NaN | NaN | NaN | NaN | 6.272 | Pankaj Kasara | NaN |
+| 8 | Machin break down Hrs | NaN | NaN | Hrs | NaN | 0 | 0 | 0 | 0 | 0 | NaN | NaN | NaN | NaN | NaN | NaN | 0 | Anil Patil | NaN |
+| 9 | No of Machines breakdown | NaN | NaN | nos | NaN | 0 | 0 | 0 | 0 | 0 | NaN | NaN | NaN | NaN | NaN | NaN | 0 | Anil Patil | NaN |
+| Notes: \n1)\n2)\n3) | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |

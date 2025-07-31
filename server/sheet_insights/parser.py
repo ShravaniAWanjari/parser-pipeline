@@ -1,6 +1,7 @@
 import re
 from pathlib import Path
 import openpyxl
+from markitdown import MarkItDown
 
 def get_sheet_names(file_path):
     """Extract all sheet names from Excel file"""
@@ -83,7 +84,7 @@ def extract_table(sheet):
     
     for row in rows:
         # Pad row to match max columns
-        padded_row = list(row) + [''] * (max_cols - len(row))
+        padded_row = list(row) + [None] * (max_cols - len(row))  # Use None instead of ''
         
         if is_empty_row(padded_row):
             consecutive_empty += 1
@@ -99,15 +100,19 @@ def extract_table(sheet):
         # Clean cell content
         cells = []
         for cell in row:
-            if cell is None:
-                cells.append('')
+            if cell is None or cell == '':
+                cells.append('null')  # Use 'null' string for empty cells
             else:
                 # Clean the cell content
                 cell_str = str(cell).replace('\n', ' ').strip()
+                # Handle Excel errors
+                if cell_str.startswith('#') or cell_str == '#DIV/0!':
+                    cells.append('null')  # Convert Excel errors to null
                 # Truncate very long formula strings
-                if cell_str.startswith('=') and len(cell_str) > 50:
-                    cell_str = cell_str[:47] + '...'
-                cells.append(cell_str)
+                elif cell_str.startswith('=') and len(cell_str) > 50:
+                    cells.append('null')  # Convert long formulas to null
+                else:
+                    cells.append(cell_str)
         
         line = '| ' + ' | '.join(cells) + ' |'
         markdown_lines.append(line)
@@ -156,80 +161,57 @@ def clean_markdown_post_process(markdown_path, max_empty_lines=3):
         print(f"⚠️ Failed to clean {markdown_path}: {e}")
 
 def extract_markdown(file_path, output_dir, sheets_to_process=None, skip_first_sheet=True, max_empty_rows=3):
-    """
-    Enhanced extract_markdown function with empty row filtering
-    
-    Args:
-        file_path: Path to Excel file
-        output_dir: Directory to save markdown files
-        sheets_to_process: List of specific sheet names to process (optional)
-        skip_first_sheet: Whether to skip the first sheet (default True)
-        max_empty_rows: Maximum consecutive empty rows to keep (default 3)
-    
-    Returns:
-        tuple: (list of markdown file paths, name mapping dict)
-    """
     all_sheet_names = get_sheet_names(file_path)
     if not all_sheet_names:
         return [], {}
 
+    # Decide which sheets to process
     if sheets_to_process:
         target_sheets = sheets_to_process
     else:
+        # Skip the first sheet if requested
         target_sheets = all_sheet_names[1:] if skip_first_sheet else all_sheet_names
 
     print(f"📋 Processing {len(target_sheets)} sheet(s): {target_sheets}")
-    
-    wb = openpyxl.load_workbook(file_path, read_only=True)
+
     markdown_paths = []
     name_mapping = {}
 
-    for sheet_name in target_sheets:
-        try:
-            sheet = wb[sheet_name]
-            clean_sheet_name = re.sub(r'[^\w\-_]', '_', sheet_name.strip())
-            clean_sheet_name = re.sub(r'_+', '_', clean_sheet_name).strip('_')
-            
-            print(f"📄 Processing: {sheet_name} -> {clean_sheet_name}")
+    md = MarkItDown(enable_plugins=False)
+    result = md.convert(str(file_path))
+    text = result.text_content
 
-            # Check if the base markdown file already exists
-            base_markdown_path = output_dir / f"{clean_sheet_name}.md"
-            if base_markdown_path.exists():
-                print(f"⏭️ Skipping {base_markdown_path.name} - already exists")
-                markdown_paths.append(base_markdown_path)
-                name_mapping[base_markdown_path.stem] = sheet_name
-                continue
+    # Use regex to find all sheet headings (e.g., "# SheetName" or "## SheetName")
+    sheet_heading_pattern = re.compile(r"^(#+)\s*(.+)$")
+    current_sheet = None
+    current_lines = []
+    for line in text.splitlines():
+        match = sheet_heading_pattern.match(line)
+        if match:
+            # Save previous sheet if any, but only if it's in target_sheets
+            if current_sheet and current_lines and current_sheet in target_sheets:
+                clean_sheet_name = re.sub(r'[^\w\-_]', '_', current_sheet.strip())
+                clean_sheet_name = re.sub(r'_+', '_', clean_sheet_name).strip('_')
+                markdown_path = output_dir / f"{clean_sheet_name}.md"
+                with open(markdown_path, "w", encoding="utf-8") as f:
+                    f.write("\n".join(current_lines))
+                markdown_paths.append(markdown_path)
+                name_mapping[clean_sheet_name] = current_sheet
+            # Start new sheet
+            current_sheet = match.group(2)
+            current_lines = [line]
+        else:
+            if current_lines is not None:
+                current_lines.append(line)
+    # Save last sheet if it's in target_sheets
+    if current_sheet and current_lines and current_sheet in target_sheets:
+        clean_sheet_name = re.sub(r'[^\w\-_]', '_', current_sheet.strip())
+        clean_sheet_name = re.sub(r'_+', '_', clean_sheet_name).strip('_')
+        markdown_path = output_dir / f"{clean_sheet_name}.md"
+        with open(markdown_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(current_lines))
+        markdown_paths.append(markdown_path)
+        name_mapping[clean_sheet_name] = current_sheet
 
-            # If base doesn't exist, check for numbered versions
-            markdown_path = base_markdown_path
-            counter = 1
-            while markdown_path.exists():
-                markdown_path = output_dir / f"{clean_sheet_name}_{counter}.md"
-                counter += 1
-
-            # Extract content
-            metadata_lines = format_metadata(sheet)
-            table_lines = extract_table(sheet)
-            
-            # Write the markdown file
-            with open(markdown_path, "w", encoding="utf-8") as f:
-                f.write(f"## {sheet_name} - Supplier Partner Performance Matrix\n\n")
-                for line in metadata_lines:
-                    f.write(f"- {line}\n")
-                f.write("\n")
-                for line in table_lines:
-                    f.write(line + "\n")
-
-            # Post-process to clean up any remaining excessive empty rows
-            clean_markdown_post_process(markdown_path, max_empty_rows)
-            
-            markdown_paths.append(markdown_path)
-            name_mapping[markdown_path.stem] = sheet_name
-            print(f"✅ Saved: {markdown_path.name}")
-            
-        except Exception as e:
-            print(f"❌ Failed to process {sheet_name}: {e}")
-            continue
-
-    wb.close()
+    print(f"✅ Saved {len(markdown_paths)} markdown files using MarkItDown")
     return markdown_paths, name_mapping
