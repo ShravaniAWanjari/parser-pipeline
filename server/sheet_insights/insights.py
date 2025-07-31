@@ -3,6 +3,7 @@ from sheet_insights.config import client
 from pathlib import Path
 import os
 import time
+import random
 
 
 INSIGHT_PROMPT = """
@@ -32,33 +33,43 @@ Example output:
 
 
 def get_insights(markdown_text: str, sheet_name: str = ""):
-    """Generate insights for a single sheet with optimized processing"""
-    try:
-        start_time = time.time()
+    """Generate insights for a single sheet with retry logic"""
+    max_retries = 3
+    base_delay = 2
+    
+    for attempt in range(max_retries):
+        try:
+            start_time = time.time()
+            
+            deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+            if not deployment_name:
+                print(f"❌ AZURE_OPENAI_DEPLOYMENT environment variable not set")
+                return None
 
-        # Optimize the prompt for faster processing
-        response = client.chat.completions.create(
-            model=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
-            messages=[
-                {"role": "system", "content": "You are a helpful data analyst. Respond quickly and concisely."},
-                {"role": "user", "content": INSIGHT_PROMPT + f"\n```\n{markdown_text}\n```"}
-            ],
-            temperature=0.0,
-            max_tokens=800,  # Reduced from 1000 for faster processing
-            timeout=30  # Add timeout to prevent hanging
-        )
+            response = client.chat.completions.create(
+                model=deployment_name,
+                messages=[
+                    {"role": "system", "content": "You are a helpful data analyst. Respond quickly and concisely."},
+                    {"role": "user", "content": INSIGHT_PROMPT + f"\n```\n{markdown_text}\n```"}
+                ],
+                temperature=0.0,
+                max_tokens=800,
+                timeout=30
+            )
 
-        api_time = time.time() - start_time
-        print(f"⚡ API call for '{sheet_name}' took {api_time:.2f}s")
+            api_time = time.time() - start_time
+            print(f"⚡ API call for '{sheet_name}' took {api_time:.2f}s")
 
-        reply = response.choices[0].message.content.strip()
-        return json.loads(reply)
+            reply = response.choices[0].message.content.strip()
+            return json.loads(reply)
 
-    except json.JSONDecodeError as e:
-        print(f"❌ JSON decode error for '{sheet_name}': {e}")
-        with open(f"{sheet_name}_raw_output.txt", "w", encoding="utf-8") as f:
-            f.write(reply)
-        return None
-    except Exception as e:
-        print(f"❌ Error generating insights for '{sheet_name}': {e}")
-        return None
+        except Exception as e:
+            error_msg = str(e)
+            if "429" in error_msg and attempt < max_retries - 1:
+                delay = base_delay * (2 ** attempt) + random.uniform(0, 1)
+                print(f"⏳ Rate limited for '{sheet_name}', retrying in {delay:.1f}s (attempt {attempt + 1}/{max_retries})")
+                time.sleep(delay)
+                continue
+            else:
+                print(f"❌ Error generating insights for '{sheet_name}': {e}")
+                return None

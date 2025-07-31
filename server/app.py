@@ -12,6 +12,7 @@ from sheet_insights.parser import extract_markdown, get_sheet_names
 from sheet_insights.insights import get_insights
 from sheet_insights.general_summary import generate_general_insights
 from sheet_insights.additional_insights import generate_additional_insights
+from sheet_insights.kpi_dashboard import get_all_supplier_kpi_json
 
 app = FastAPI()
 
@@ -31,7 +32,7 @@ GENERAL_INSIGHTS_FILE = Path('results/general-info.json')
 DASHBOARD_FILE = Path('results/dashboard.json')
 ADDITIONAL_INSIGHTS_FILE = Path('results/additional-insights.json')
 RESULTS_DIR = Path('results')
-OUTPUT_JSON = Path("results/dashboard.json")
+OUTPUT_JSON = Path("results/final_supplier_kpis.json")
 uploaded_file = next(Path(UPLOAD_DIR).glob("*.xlsx"))
 
 
@@ -78,12 +79,12 @@ async def upload_excel(file: UploadFile = File(...)):
 
         print(f"🔄 Sheets to process: {sheets_to_process}")
 
-        # Extract markdown with proper sheet name handling
         markdown_paths, name_mapping = extract_markdown(
             str(file_path),
             MARKDOWN_DIR,
             sheets_to_process=sheets_to_process,
-            skip_first_sheet=False  # We're explicitly providing the sheets to process
+            skip_first_sheet=False,
+            max_empty_rows=3  # ← New parameter to control empty row limit
         )
 
         if not markdown_paths:
@@ -92,6 +93,7 @@ async def upload_excel(file: UploadFile = File(...)):
         print(f"📝 Generated {len(markdown_paths)} markdown files")
         print(f"🗺️ Name mapping: {name_mapping}")
 
+        get_all_supplier_kpi_json()
         # Process each sheet for insights with optimized parallel processing
         def process_sheet(markdown_file):
             try:
@@ -118,16 +120,10 @@ async def upload_excel(file: UploadFile = File(...)):
                 print(f"❌ Error processing {markdown_file.name}: {e}")
                 return name_mapping.get(markdown_file.stem, markdown_file.stem), None
 
-        # Generate insights for all sheets with optimized parallel processing
         insights = {}
         print(f"🚀 Starting insight generation for {len(markdown_paths)} sheets...")
 
-        # Calculate optimal number of workers based on CPU count and number of sheets
-        optimal_workers = min(
-            len(markdown_paths),  # Don't use more workers than sheets
-            max(1, os.cpu_count() or 1),  # Use CPU count but at least 1
-            15  # Cap at 15 to avoid overwhelming the API
-        )
+        optimal_workers = min(4, len(markdown_paths)) 
 
         print(f"🔧 Using {optimal_workers} parallel workers for processing")
 
@@ -178,7 +174,6 @@ async def upload_excel(file: UploadFile = File(...)):
         with open(INSIGHTS_FILE, "r", encoding="utf-8") as f:
             insights_content = json.load(f)
 
-        extract_insight_data(uploaded_file, "results/dashboard.json")
 
         print(f"🎉 Processing completed successfully!")
 
@@ -192,21 +187,6 @@ async def upload_excel(file: UploadFile = File(...)):
     except Exception as e:
         print(f"❌ Error during processing: {e}")
         raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
-    
-
-
-
-@app.get('/download/insights')
-def download_insights():
-    if not INSIGHTS_FILE.exists():
-        raise HTTPException(status_code=404, detail='Insights file not found')
-    return FileResponse(path=INSIGHTS_FILE, filename="insights.json", media_type='application/json')
-
-@app.get('/download/general')
-def download_general():
-    if not GENERAL_INSIGHTS_FILE.exists():
-        raise HTTPException(status_code=404, detail='General info file not found')
-    return FileResponse(path=GENERAL_INSIGHTS_FILE, filename='general-info.json', media_type='application/json')
 
 @app.get('/download/dashboard_file')
 def download_general():
@@ -214,61 +194,6 @@ def download_general():
         raise HTTPException(status_code=404, detail='General info file not found')
     return FileResponse(path=DASHBOARD_FILE, filename='dashboard.json', media_type='application/json')
 
-@app.post('/generate_more_insights')
-def generate_more_insights():
-    """Generate additional insights based on data not covered in previous insights"""
-    try:
-        if not INSIGHTS_FILE.exists():
-            raise HTTPException(status_code=404, detail='Insights file not found. Please upload and process an Excel file first.')
-
-        if not GENERAL_INSIGHTS_FILE.exists():
-            raise HTTPException(status_code=404, detail='General insights file not found. Please upload and process an Excel file first.')
-
-        print(f"🔄 Generating additional insights...")
-
-        additional_insights = generate_additional_insights(
-            str(INSIGHTS_FILE),
-            str(GENERAL_INSIGHTS_FILE),
-            str(ADDITIONAL_INSIGHTS_FILE)
-        )
-
-        print(f"✅ Successfully generated additional insights")
-
-        return {
-            "message": "Successfully generated additional insights",
-            "additional_insights": additional_insights
-        }
-
-    except Exception as e:
-        print(f"❌ Error generating additional insights: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to generate additional insights: {str(e)}")
-
-@app.get('/download/additional_insights')
-def download_additional_insights():
-    """Download additional insights file"""
-    if not ADDITIONAL_INSIGHTS_FILE.exists():
-        raise HTTPException(status_code=404, detail='Additional insights file not found')
-    return FileResponse(path=ADDITIONAL_INSIGHTS_FILE, filename="additional-insights.json", media_type='application/json')
-
-@app.get('/sheet_insights')
-def get_sheet_insights():
-    """Get individual sheet insights for deep dive view"""
-    try:
-        if not INSIGHTS_FILE.exists():
-            raise HTTPException(status_code=404, detail='Sheet insights file not found. Please upload and process an Excel file first.')
-
-        # Load individual sheet insights
-        with open(INSIGHTS_FILE, "r", encoding="utf-8") as f:
-            sheet_insights = json.load(f)
-
-        return {
-            "message": "Sheet insights retrieved successfully",
-            "sheet_insights": sheet_insights
-        }
-
-    except Exception as e:
-        print(f"❌ Error loading sheet insights: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to load sheet insights: {str(e)}")
 
 
 if __name__ == "__main__":
