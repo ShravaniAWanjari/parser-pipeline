@@ -8,7 +8,6 @@ import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import openpyxl
 import time
-from sheet_insights.dashboard import extract_insight_data
 from sheet_insights.parser import extract_markdown, get_sheet_names
 from sheet_insights.insights import get_insights
 from sheet_insights.general_summary import generate_general_insights
@@ -56,7 +55,6 @@ async def upload_excel(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, f)
 
     print(f"📁 Uploaded file: {file.filename}")
-    extract_insight_data(uploaded_file, "dashboard.json")
 
 
     try:
@@ -271,61 +269,6 @@ def get_sheet_insights():
     except Exception as e:
         print(f"❌ Error loading sheet insights: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to load sheet insights: {str(e)}")
-
-@app.get('/all_insights')
-def get_all_insights():
-    """Get all available insights in one response"""
-    try:
-        result = {
-            "status": "success",
-            "available_insights": {}
-        }
-
-        # Load individual sheet insights
-        if INSIGHTS_FILE.exists():
-            with open(INSIGHTS_FILE, "r", encoding="utf-8") as f:
-                result["available_insights"]["sheet_insights"] = json.load(f)
-        else:
-            result["available_insights"]["sheet_insights"] = None
-
-        # Load general insights
-        if GENERAL_INSIGHTS_FILE.exists():
-            with open(GENERAL_INSIGHTS_FILE, "r", encoding="utf-8") as f:
-                result["available_insights"]["general_insights"] = json.load(f)
-        else:
-            result["available_insights"]["general_insights"] = None
-
-        # Load additional insights
-        if ADDITIONAL_INSIGHTS_FILE.exists():
-            with open(ADDITIONAL_INSIGHTS_FILE, "r", encoding="utf-8") as f:
-                result["available_insights"]["additional_insights"] = json.load(f)
-        else:
-            result["available_insights"]["additional_insights"] = None
-
-        # Add summary
-        result["summary"] = {
-            "sheet_insights_count": len(result["available_insights"]["sheet_insights"]) if result["available_insights"]["sheet_insights"] else 0,
-            "general_insights_count": len(result["available_insights"]["general_insights"]) if result["available_insights"]["general_insights"] else 0,
-            "additional_insights_count": len(result["available_insights"]["additional_insights"]) if result["available_insights"]["additional_insights"] else 0
-        }
-
-        return result
-
-    except Exception as e:
-        print(f"❌ Error loading all insights: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to load insights: {str(e)}")
-
-@app.get('/status')
-def get_status():
-    """Get processing status and available files"""
-    return {
-        "markdown_files": len(list(MARKDOWN_DIR.glob("*.md"))) if MARKDOWN_DIR.exists() else 0,
-        "performance_optimizations": {
-            "llamaparse_workers": 4,
-            "max_thread_workers": min(15, max(1, os.cpu_count() or 1)),
-            "fast_mode_enabled": True
-        }
-    }
 
 
 if __name__ == "__main__":
