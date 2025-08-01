@@ -78,18 +78,16 @@ The JSON response will contain the structured KPI data, company-wise insights, a
 ```json
 {
   "kpis": {
-    "KPI_Name_1": { ... },
+    "KPI_Name_1": { 
+      "company_name":{"month": value, "month": value ,
+     },
     "KPI_Name_2": { ... }
   },
-  "company_insights": [
-    {
-      "company_name": "Company A",
-      "summary": [
+{company :
         "Keypoint 1 for Company A.",
         "Keypoint 2 for Company A."
-      ]
-    }
-  ],
+      
+},
   "general_summary": [
     "Overall keypoint 1.",
     "Overall keypoint 2."
