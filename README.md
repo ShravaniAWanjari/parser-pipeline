@@ -18,9 +18,16 @@ This repository contains a robust and efficient data parsing pipeline designed t
   {
     "KPI_Name_1": {
       "Company_A": {
-        "Month_1": "Value",
-        "Month_2": "Value"
+        "January": "Value",
+        "February": "Value"
+      },
+      "Company_B": {
+        "January": "Value",
+        "February": "Value"
       }
+    },
+    "KPI_Name_2": {
+      ...
     }
   }
   ```
@@ -78,16 +85,36 @@ The JSON response will contain the structured KPI data, company-wise insights, a
 ```json
 {
   "kpis": {
-    "KPI_Name_1": { 
-      "company_name":{"month": value, "month": value ,
-     },
-    "KPI_Name_2": { ... }
+    "KPI_Name_1": {
+      "Company A": {
+        "January": 100,
+        "February": 110
+      },
+      "Company B": {
+        "January": 90,
+        "February": 95
+      }
+    },
+    "KPI_Name_2": {
+      ...
+    }
   },
-{company :
+  "company_insights": [
+    {
+      "company_name": "Company A",
+      "summary": [
         "Keypoint 1 for Company A.",
         "Keypoint 2 for Company A."
-      
-},
+      ]
+    },
+    {
+      "company_name": "Company B",
+      "summary": [
+        "Keypoint 1 for Company B.",
+        "Keypoint 2 for Company B."
+      ]
+    }
+  ],
   "general_summary": [
     "Overall keypoint 1.",
     "Overall keypoint 2."
