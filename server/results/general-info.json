@@ -1,12 +1,12 @@
 [
-  "Shree Stamping's OK delivery cycles plummeted from 100% in March to just 7% in May.",
-  "Unique Systems' machine breakdown hours rose from 0 in February to 6 in June, unlike others.",
-  "Daxter's OK delivery cycles averaged 90.33%, lower than the consistent 100% seen in most sheets.",
-  "CAM reported the highest safety incidents, peaking at 2 in February, while others had zero.",
-  "Acute Wiring's trips surged from 2 in January to 23 in May, then dropped to 0 in June.",
-  "S B Precision Springs shipped 359,192 units in March, the highest monthly quantity across all sheets.",
-  "Makarjyothi and S B Precision Springs maintained 100% OK delivery cycles and zero safety accidents throughout.",
-  "Daxter's vehicle turnaround time increased from 6 hours in January to 6.8 in May, unlike others.",
-  "JJ Tecnoplast's shipped quantity dropped from 12,261 in March to 4,920 in May, a 59.8% decrease.",
-  "CAM's OK delivery cycles rebounded from 54% in April to 80% in May, showing rapid improvement."
+  "CAM had 3 accidents in Q1, highest among all suppliers; others reported 0-1.",
+  "Shree_Stamping's OK delivery percent dropped sharply from 100% in Feb-Mar to 7% in May.",
+  "Makarjyothi consistently shipped over 249,000 parts monthly, highest volume among all suppliers.",
+  "S_B_Precision_Springs achieved highest parts per trip, peaking at 30,437.5 in March.",
+  "Daxter maintained high trip counts (48-75/month) but moderate parts per trip (324-619).",
+  "Victor_Engineers_ASAL had highest machine downtime: 32 hours in Feb, declining to 3 in June.",
+  "Unique_Systems had lowest parts per trip, averaging 30-43, despite moderate trip counts.",
+  "Ankita_Auto's vehicle TAT was 4-5 hours, much higher than Makarjyothi's 0.05 hours.",
+  "Acute_Wiring, Kamal, and Makarjyothi had zero production loss and accidents in all reported months.",
+  "CAM's OK delivery percent improved from 54% in April to 80% in May, despite earlier safety incidents."
 ]

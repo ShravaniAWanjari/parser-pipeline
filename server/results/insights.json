@@ -1,79 +1,86 @@
 {
-  "Ankita Auto": [
+  "Acute_Wiring": [
+    "No safety accidents were reported from January to May.",
+    "Production loss hours remained at zero for every month from January to May.",
+    "OK delivery percentage was consistently 100% from January to May.",
+    "The number of trips increased steadily from 2 in January to 23 in May.",
+    "Machine downtime occurred only in January with 1 hour and 1 breakdown, with zero downtime and breakdowns from February to May."
+  ],
+  "Ankita_Auto": [
     "No safety accidents were reported from March to June.",
-    "Production loss due to material shortage was zero for every month from March to June.",
-    "OK delivery cycles maintained a consistent 100% rate from March to June.",
-    "The number of trips peaked at 42 in May, with lower values in March (25), April (32), and June (25).",
-    "Machine breakdown hours decreased from 4 in March to 0 in June, with the number of machine breakdowns also dropping from 0.5 to 0 over the same period."
-  ],
-  "Daxter": [
-    "No safety accidents or machine breakdowns were reported from January to June, with all values at 0.",
-    "OK delivery cycles peaked at 97% in March and were lowest at 82% in January, averaging 90.33% over the six months.",
-    "The number of trips per month decreased from 75 in January to 48 in March, then slightly increased to 51 by May, with an average of 58.4 trips.",
-    "Quantity shipped per month increased from 24,369 in January to a high of 30,342 in April, before dropping to 26,383 in May.",
-    "Vehicle turnaround time rose steadily from 6 hours in January and February to 6.8 hours in May, averaging 6.272 hours."
-  ],
-  "Kamal": [
-    "There was one safety accident recorded in April, while all other months from January to June reported zero accidents.",
-    "Production loss due to material shortage was zero hours for every month from January to June.",
-    "OK delivery cycles were consistently at 100% from January through June.",
-    "The number of trips per month peaked at 38 in April and was lowest at 18 in both January and February.",
-    "Machine breakdown hours were reported only in March with 2 hours, while all other months from January to June had zero machine breakdown hours."
+    "Production loss hours were zero for every month from March to June.",
+    "OK delivery percentage was 100% for each month from March to June.",
+    "Trips peaked at 42 in May, compared to 25 in both March and June.",
+    "Machine downtime hours decreased from 4 in March to 0 in June, with machine breakdowns also dropping from 0.5 to 0 over the same period."
   ],
   "CAM": [
-    "Safety incidents peaked in February with 2 accidents, while January, April, May, and June each reported 0 accidents and March reported 1.",
-    "Production loss due to material shortage was consistently 0 hours from January to June.",
-    "OK delivery cycles percentage was lowest in March and April at 54%, then increased sharply to 80% in May.",
-    "The number of trips per month decreased from 26 in January to 19 in May, with an average of 22.6 trips.",
-    "Machine breakdown hours were highest in April at 3.5 hours, with no breakdowns in January, February, and March."
+    "Safety accidents peaked in February with 2 incidents and dropped to zero by April and May.",
+    "Production loss hours were zero from January to May.",
+    "OK delivery percentage was lowest in April at 54% and highest in May at 80%.",
+    "Trips decreased from 26 in January to 19 in May.",
+    "Machine downtime hours were highest in April at 3.5 hours, with no downtime in January to March."
   ],
-  "Unique Systems": [
-    "No safety accidents were reported from February to June.",
-    "Production loss due to material shortage occurred only in February, totaling 0.5 hours, with zero loss in all other months.",
-    "The number of trips per month increased steadily from 22 in February to 54 in June.",
-    "Quantity shipped per month rose from 719 units in February to 1623 units in June, peaking in June.",
-    "Machine breakdown hours increased from 0 in February to 6 in June, with the highest value recorded in June."
+  "Daxter": [
+    "No safety accidents or production loss hours were reported from January to May.",
+    "OK delivery percentage improved from 82% in January to a peak of 97% in March, then declined to 88% in May.",
+    "Trips decreased from 75 in January to 48 in March, then slightly increased to 51 in May.",
+    "Quantity shipped increased from 24,369 in January to a peak of 30,342 in April, then dropped to 26,383 in May.",
+    "Machine downtime and breakdowns were zero for all months from January to May."
   ],
-  "Acute Wiring": [
-    "No safety accidents were reported from January to June, with all months recording zero incidents.",
-    "Production loss due to material shortage was consistently zero hours for each month from January to June.",
-    "OK delivery cycles maintained a perfect 100% rating for every month from January to June.",
-    "The number of trips per month increased steadily from 2 in January to 23 in May, before dropping to 0 in June.",
-    "Quantity shipped per month peaked at 12,091 units in May, with the lowest value of 1,611 units in February."
+  "JJ_Tecnoplast": [
+    "No safety accidents were reported from March to June.",
+    "Production loss hours were zero for every month from March to June.",
+    "OK delivery percentage was 100% for each month from March to June.",
+    "Trips peaked at 40 in April and dropped to 18 in June.",
+    "Machine downtime and breakdowns were zero for all months from March to June."
   ],
-  "Shree Stamping": [
-    "No safety accidents or machine breakdowns were reported from January to June.",
-    "OK delivery cycles percentage dropped sharply from 100% in February and March to 31% in April, 7% in May, and 21% in June.",
-    "Production loss due to material shortage was zero for all months from January to June.",
-    "The number of trips per month increased from 3 in March and April to 8 in both May and June.",
-    "Quantity shipped peaked at 2,538 units in May, the highest monthly figure from January to June."
+  "Kamal": [
+    "A single safety accident was reported in April; all other months from January to May had zero accidents.",
+    "Production loss hours were zero from January to May.",
+    "OK delivery percentage was 100% for every month from January to May.",
+    "Trips increased from 18 in January and February to a peak of 38 in April, then dropped to 27 in May.",
+    "Machine downtime occurred only in March with 2 hours; all other months from January to May had zero downtime and breakdowns."
   ],
-  "JJ Tecnoplast": [
-    "There were zero safety accidents reported from March to June.",
-    "Production loss due to material shortage was consistently zero from March to June.",
-    "OK delivery cycles maintained a perfect 100% rate each month from March to June.",
-    "The number of trips per month peaked at 40 in February and dropped to 18 in May.",
-    "Quantity shipped per month reached its highest in March at 12,261 units and its lowest in May at 4,920 units."
-  ],
-  "Laxmi SPRINGS": [
-    "No safety accidents or machine breakdowns were reported from March to June, with all values at 0.",
-    "Production loss due to material shortage was consistently 0 hours from March to June.",
-    "OK delivery cycles improved from 97.54% in March to 100% in both May and June.",
-    "The number of trips per month peaked at 25 in April and dropped to 21 in June.",
-    "Quantity shipped per month was highest in March at 13,330 units and lowest in April at 10,018 units."
-  ],
-  "S B Precision Springs": [
-    "No safety accidents were reported from January to June, with accident data consistently at 0 each month.",
-    "Production loss due to material shortage was zero for every month from January to June.",
-    "OK delivery cycles maintained a perfect 100% rating from January through June.",
-    "The number of trips per month fluctuated, peaking at 13 in March and reaching a low of 8 in both February and May.",
-    "Quantity shipped per month was highest in March at 359,192 units and lowest in May at 208,800 units."
+  "Laxmi_SPRINGS": [
+    "No safety accidents were reported from April to June.",
+    "Production loss hours were zero for April, May, and June.",
+    "OK delivery percentage improved from 97.54% in April to 100% in May and June.",
+    "Trips increased from 24 in April to 25 in May, then decreased to 21 in June.",
+    "Machine downtime and breakdowns were zero for April, May, and June."
   ],
   "Makarjyothi": [
-    "There were zero safety accidents reported from January to June.",
-    "Production loss due to material shortage was consistently zero hours each month from January to June.",
-    "OK delivery cycles remained at 100% for every month from January to June.",
-    "The number of trips per month varied, peaking at 24 in January and May, and dropping to 15 in June.",
-    "Quantity shipped per month was highest in February at 324,000 units and lowest in June at 249,136 units."
+    "No safety accidents or production loss hours were reported from January to June.",
+    "OK delivery percentage was consistently 100% from January to June.",
+    "Trips fluctuated, peaking at 24 in January and May, and dropping to 15 in June.",
+    "Quantity shipped was highest in February at 324,000 and lowest in June at 249,136.",
+    "Machine downtime and breakdowns were zero for all months from January to June."
+  ],
+  "Shree_Stamping": [
+    "No safety accidents were reported from January to June.",
+    "Production loss hours were zero for every month from January to June.",
+    "OK delivery percentage dropped sharply from 100% in March to 31% in April and further to 7% in May, then slightly recovered to 21% in June.",
+    "Trips remained low, ranging from 3 to 8 per month from January to June.",
+    "Machine downtime and breakdowns were zero for all months from January to June."
+  ],
+  "S_B_Precision_Springs": [
+    "No safety accidents were reported from February to June.",
+    "Production loss hours were zero for every month from February to June.",
+    "OK delivery percentage was 100% for each month from February to June.",
+    "Trips peaked at 13 in April and dropped to 8 in both March and June.",
+    "Machine downtime and breakdowns were zero for all months from February to June."
+  ],
+  "Unique_Systems": [
+    "No safety accidents were reported from February to June.",
+    "Production loss hours were 0.5 in February and zero from March to June.",
+    "No OK delivery percentage data is available for any month.",
+    "Trips increased steadily from 22 in February to 54 in June.",
+    "Machine downtime hours increased from 0 in February to 6 in June, with 1 machine breakdown each month from March to June."
+  ],
+  "Victor_Engineers_ASAL": [
+    "No safety accidents were reported from February to June.",
+    "Production loss hours were zero for every month from February to June.",
+    "OK delivery percentage was 100% for each month from February to June.",
+    "Trips decreased from 21 in February to 11 in May, then increased to 13 in June.",
+    "Machine downtime hours decreased from 32 in February to 3 in June, while machine breakdowns ranged from 1 to 3 per month."
   ]
 }

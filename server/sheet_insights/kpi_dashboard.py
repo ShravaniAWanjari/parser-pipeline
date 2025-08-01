@@ -131,3 +131,4 @@ Markdown:
         json.dump(final_output, f, indent=2)
 
     print(f"✅ All supplier KPIs aggregated to {output_path}")
+    return final_output
