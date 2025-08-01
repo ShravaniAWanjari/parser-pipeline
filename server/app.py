@@ -23,7 +23,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Define paths
 UPLOAD_DIR = Path('uploads')
 MARKDOWN_DIR = Path("results/markdown_output")
 INSIGHTS_FILE = Path('results/insights.json')
@@ -32,11 +31,9 @@ ADDITIONAL_INSIGHTS_FILE = Path('results/additional-insights.json')
 RESULTS_DIR = Path('results')
 OUTPUT_JSON = Path("results/final_supplier_kpis.json")
 
-# Create necessary folders
 for folder in [UPLOAD_DIR, MARKDOWN_DIR, RESULTS_DIR]:
     folder.mkdir(parents=True, exist_ok=True)
 
-# Helper to normalize sheet names to markdown filenames
 def normalize_filename(sheet_name: str) -> str:
     return sheet_name.strip().replace(" ", "_") + ".md"
 
@@ -62,13 +59,11 @@ async def upload_excel(file: UploadFile = File(...)):
 
         print(f"Sheets found in Excel: {all_sheet_names}")
 
-        # Exclude summary sheets
         excluded_sheets = ['Average Summary', 'Analysis SUMMARY']
         sheets_to_process = [sheet.strip() for sheet in all_sheet_names if sheet.strip() not in excluded_sheets]
 
         print(f"Sheets selected for processing: {sheets_to_process}")
 
-        # Check which markdown files already exist
         existing_md_files = [
             sheet for sheet in sheets_to_process
             if (MARKDOWN_DIR / normalize_filename(sheet)).exists()

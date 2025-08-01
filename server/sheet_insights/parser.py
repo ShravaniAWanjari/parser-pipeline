@@ -32,11 +32,9 @@ def has_meaningful_content(row):
     """Check if row has meaningful content (not just formulas or minimal data)"""
     non_empty_cells = [cell for cell in row if cell is not None and str(cell).strip()]
     
-    # If less than 2 non-empty cells, consider it not meaningful
     if len(non_empty_cells) < 2:
         return False
     
-    # Check if it's just formulas without actual data
     formula_only = all(str(cell).startswith('=') for cell in non_empty_cells)
     if formula_only and len(non_empty_cells) < 3:
         return False
@@ -47,30 +45,25 @@ def find_data_boundaries(sheet, start_row=6):
     """Find the actual data boundaries to avoid processing too many empty rows"""
     rows = list(sheet.iter_rows(min_row=start_row, values_only=True))
     
-    # Find last row with meaningful content
     last_meaningful_row = -1
     for i, row in enumerate(rows):
         if has_meaningful_content(row):
             last_meaningful_row = i
     
-    # If we found meaningful content, include a few extra rows for spacing
     if last_meaningful_row >= 0:
-        return rows[:last_meaningful_row + 4]  # +4 to allow 3-4 empty rows after data
+        return rows[:last_meaningful_row + 4] 
     else:
-        # If no meaningful content found, return first 10 rows as fallback
         return rows[:10]
 
 def extract_table(sheet):
     """Extract and format the core table starting from a specific row"""
     start_row = 6  # Adjust based on where your actual data starts
     
-    # Get bounded rows instead of all rows
     rows = find_data_boundaries(sheet, start_row)
     
     if not rows:
         return []
     
-    # Find max number of columns from non-empty rows
     non_empty_rows = [row for row in rows if not is_empty_row(row)]
     if not non_empty_rows:
         return []
@@ -133,17 +126,13 @@ def clean_markdown_post_process(markdown_path, max_empty_lines=3):
         consecutive_empty_table_rows = 0
         
         for line in lines:
-            # Check if line is an empty table row (only | and spaces/empty cells)
             stripped = line.strip()
             if stripped.startswith('|') and stripped.endswith('|'):
-                # Remove outer pipes and split
                 content = stripped[1:-1].split('|')
-                # Check if all cells are empty or just whitespace
                 if all(cell.strip() == '' for cell in content):
                     consecutive_empty_table_rows += 1
                     if consecutive_empty_table_rows <= max_empty_lines:
                         cleaned_lines.append(line)
-                    # Skip this line if we've exceeded the limit
                 else:
                     consecutive_empty_table_rows = 0
                     cleaned_lines.append(line)
@@ -151,7 +140,6 @@ def clean_markdown_post_process(markdown_path, max_empty_lines=3):
                 consecutive_empty_table_rows = 0
                 cleaned_lines.append(line)
         
-        # Write back the cleaned content
         with open(markdown_path, 'w', encoding='utf-8') as f:
             f.writelines(cleaned_lines)
         
@@ -165,11 +153,9 @@ def extract_markdown(file_path, output_dir, sheets_to_process=None, skip_first_s
     if not all_sheet_names:
         return [], {}
 
-    # Decide which sheets to process
     if sheets_to_process:
         target_sheets = sheets_to_process
     else:
-        # Skip the first sheet if requested
         target_sheets = all_sheet_names[1:] if skip_first_sheet else all_sheet_names
 
     print(f"📋 Processing {len(target_sheets)} sheet(s): {target_sheets}")
@@ -181,14 +167,12 @@ def extract_markdown(file_path, output_dir, sheets_to_process=None, skip_first_s
     result = md.convert(str(file_path))
     text = result.text_content
 
-    # Use regex to find all sheet headings (e.g., "# SheetName" or "## SheetName")
     sheet_heading_pattern = re.compile(r"^(#+)\s*(.+)$")
     current_sheet = None
     current_lines = []
     for line in text.splitlines():
         match = sheet_heading_pattern.match(line)
         if match:
-            # Save previous sheet if any, but only if it's in target_sheets
             if current_sheet and current_lines and current_sheet in target_sheets:
                 clean_sheet_name = re.sub(r'[^\w\-_]', '_', current_sheet.strip())
                 clean_sheet_name = re.sub(r'_+', '_', clean_sheet_name).strip('_')
@@ -197,13 +181,11 @@ def extract_markdown(file_path, output_dir, sheets_to_process=None, skip_first_s
                     f.write("\n".join(current_lines))
                 markdown_paths.append(markdown_path)
                 name_mapping[clean_sheet_name] = current_sheet
-            # Start new sheet
             current_sheet = match.group(2)
             current_lines = [line]
         else:
             if current_lines is not None:
                 current_lines.append(line)
-    # Save last sheet if it's in target_sheets
     if current_sheet and current_lines and current_sheet in target_sheets:
         clean_sheet_name = re.sub(r'[^\w\-_]', '_', current_sheet.strip())
         clean_sheet_name = re.sub(r'_+', '_', clean_sheet_name).strip('_')
