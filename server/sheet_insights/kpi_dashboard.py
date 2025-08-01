@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import csv
 from pathlib import Path
 from openai import AzureOpenAI
 from dotenv import load_dotenv
@@ -8,14 +9,12 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Azure OpenAI Client
 client = AzureOpenAI(
     api_key=os.getenv("AZURE_OPENAI_API_KEY"),
     api_version="2023-07-01-preview",
     azure_endpoint=os.getenv("AZURE_ENDPOINT")
 )
 
-# Define standard KPI mapping
 kpi_map = {
     "Safety- Accident data": "accidents",
     "Production loss due to Material shortage": "productionLossHrs",
@@ -28,11 +27,70 @@ kpi_map = {
     "No of Machines breakdown": "machineBreakdowns"
 }
 
-# Define all months
 ALL_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-# Main KPI extraction function
-def get_all_supplier_kpi_json(markdown_folder: Path = Path("results/markdown_output"), output_path: Path = Path("results/final_supplier_kpis.json")):
+def find_month_data_columns(csv_rows):
+    """
+    Find the exact column positions where month data should be mapped
+    The data starts immediately after the unit column and includes empty cells as null months
+    """
+    for row in csv_rows:
+        if len(row) > 10:  # Ensure row has enough columns
+            # Find unit column (nos, Hrs, %)
+            unit_col_index = -1
+            for i, cell in enumerate(row):
+                if cell.strip().lower() in ['nos', 'hrs', '%']:
+                    unit_col_index = i
+                    break
+            
+            if unit_col_index >= 0:
+                # Data starts immediately after unit column (including empty cells for null months)
+                data_start_col = unit_col_index + 1
+                return data_start_col
+    
+    return 6  # Default fallback
+
+def parse_monthly_data_from_row(row, data_start_col):
+    """
+    Extract monthly data from a row, preserving null values for empty cells
+    """
+    monthly_data = {}
+    
+    # Extract up to 12 months of data starting from data_start_col
+    for i, month in enumerate(ALL_MONTHS):
+        col_index = data_start_col + i
+        
+        if col_index < len(row):
+            cell_value = row[col_index].strip()
+            
+            # Handle empty/null values
+            if not cell_value or cell_value == '':
+                monthly_data[month] = None
+            # Handle Excel errors
+            elif cell_value.startswith('#') or cell_value in ['#DIV/0!', '#N/A', '#VALUE!']:
+                monthly_data[month] = None
+            else:
+                try:
+                    # Try to convert to number
+                    if '.' in cell_value:
+                        monthly_data[month] = float(cell_value)
+                    else:
+                        monthly_data[month] = int(cell_value)
+                except ValueError:
+                    monthly_data[month] = None
+        else:
+            monthly_data[month] = None
+    
+    return monthly_data
+
+def get_all_supplier_kpi_json(csv_folder: Path = Path("results/csv_output"), output_path: Path = Path("results/final_supplier_kpis.json")):
+    print(f"🔍 Looking for CSV files in: {csv_folder}")
+    print(f"📁 CSV folder exists: {csv_folder.exists()}")
+    
+    if not csv_folder.exists():
+        print(f"❌ CSV folder does not exist: {csv_folder}")
+        return None
+    
     final_output = {
         "generatedOn": "2025-07-30",
         "kpiMetadata": {
@@ -55,80 +113,76 @@ def get_all_supplier_kpi_json(markdown_folder: Path = Path("results/markdown_out
         print("❌ AZURE_OPENAI_DEPLOYMENT environment variable not set")
         return None
 
-    markdown_files = list(markdown_folder.glob("*.md"))
+    csv_files = list(csv_folder.glob("*.csv"))
+    print(f"📊 Found {len(csv_files)} CSV files: {[f.name for f in csv_files]}")
+    
+    if not csv_files:
+        print("⚠️ WARNING: No CSV files found for KPI processing")
+        return final_output
 
-    for md_path in markdown_files:
-        supplier_name = md_path.stem.replace("- Supplier Partner Performance Matrix", "").strip()
-        markdown_content = md_path.read_text(encoding="utf-8")
-
-        user_prompt = f"""
-Given the markdown content below, extract KPIs and convert into this JSON structure:
-
-{{
-  "supplier": "{supplier_name}",
-  "kpis": {{
-    "accidents": {{"Jan": null, "Feb": null, "Mar": null, "Apr": null, "May": null, "Jun": null, "Jul": null, "Aug": null, "Sep": null, "Oct": null, "Nov": null, "Dec": null}},
-    "productionLossHrs": {{"Jan": null, "Feb": null, "Mar": null, "Apr": null, "May": null, "Jun": null, "Jul": null, "Aug": null, "Sep": null, "Oct": null, "Nov": null, "Dec": null}},
-    "okDeliveryPercent": {{"Jan": null, "Feb": null, "Mar": null, "Apr": null, "May": null, "Jun": null, "Jul": null, "Aug": null, "Sep": null, "Oct": null, "Nov": null, "Dec": null}},
-    "trips": {{"Jan": null, "Feb": null, "Mar": null, "Apr": null, "May": null, "Jun": null, "Jul": null, "Aug": null, "Sep": null, "Oct": null, "Nov": null, "Dec": null}},
-    "quantityShipped": {{"Jan": null, "Feb": null, "Mar": null, "Apr": null, "May": null, "Jun": null, "Jul": null, "Aug": null, "Sep": null, "Oct": null, "Nov": null, "Dec": null}},
-    "partsPerTrip": {{"Jan": null, "Feb": null, "Mar": null, "Apr": null, "May": null, "Jun": null, "Jul": null, "Aug": null, "Sep": null, "Oct": null, "Nov": null, "Dec": null}},
-    "vehicleTAT": {{"Jan": null, "Feb": null, "Mar": null, "Apr": null, "May": null, "Jun": null, "Jul": null, "Aug": null, "Sep": null, "Oct": null, "Nov": null, "Dec": null}},
-    "machineDowntimeHrs": {{"Jan": null, "Feb": null, "Mar": null, "Apr": null, "May": null, "Jun": null, "Jul": null, "Aug": null, "Sep": null, "Oct": null, "Nov": null, "Dec": null}},
-    "machineBreakdowns": {{"Jan": null, "Feb": null, "Mar": null, "Apr": null, "May": null, "Jun": null, "Jul": null, "Aug": null, "Sep": null, "Oct": null, "Nov": null, "Dec": null}}
-  }}
-}}
-
-IMPORTANT RULES:
-1. Use these keys only: {json.dumps(kpi_map)}
-2. ALWAYS include all 12 months (Jan through Dec) for every KPI
-3. Use null for missing/empty values, NOT 0
-4. Convert "null" strings in markdown to actual null values
-5. Convert Excel errors (#DIV/0!, #N/A, etc.) to null
-6. Convert empty cells or blank spaces to null
-7. Only use actual numbers for real data values
-
-Markdown:
-{markdown_content}
-"""
+    processed_count = 0
+    for csv_path in csv_files:
+        supplier_name = csv_path.stem.replace("- Supplier Partner Performance Matrix", "").strip()
+        print(f"🔄 Processing supplier: {supplier_name} from {csv_path.name}")
 
         try:
-            start_time = time.time()
-            response = client.chat.completions.create(
-                model=deployment_name,
-                messages=[
-                    {"role": "system", "content": "You are a data extractor AI. Convert supplier markdown tables into KPI-wise JSON. Always include all 12 months and use null for missing data."},
-                    {"role": "user", "content": user_prompt}
-                ],
-                temperature=0
-            )
-            elapsed = time.time() - start_time
-            print(f"✅ Processed {supplier_name} in {elapsed:.2f}s")
+            with open(csv_path, newline='', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                csv_rows = list(reader)
+                
+            # Check if CSV has meaningful content
+            if len(csv_rows) < 2:
+                print(f"⚠️ CSV file appears to have minimal content: {csv_path.name}")
+                continue
+                
         except Exception as e:
-            print(f"❌ Failed to process {supplier_name}: {e}")
+            print(f"❌ Failed to read CSV for {supplier_name}: {e}")
             continue
 
-        try:
-            ai_json = json.loads(response.choices[0].message.content)
-        except Exception as e:
-            print(f"❌ Failed to parse JSON for {supplier_name}: {e}")
-            continue
+        # Find where monthly data columns start
+        data_start_col = find_month_data_columns(csv_rows)
+        print(f"📅 Data starts at column {data_start_col} for {supplier_name}")
 
-        # Ensure all months are present for each KPI
-        for kpi, values in ai_json.get("kpis", {}).items():
-            if kpi not in final_output:
-                final_output[kpi] = {}
+        # Process each KPI row
+        supplier_kpis = {}
+        
+        for row in csv_rows:
+            if len(row) < 5:  # Skip rows that are too short
+                continue
+                
+            # Check if this row contains a KPI we're interested in
+            kpi_name = None
+            for i in range(min(3, len(row))):  # Check first 3 columns for KPI name
+                cell_content = row[i].strip()
+                if cell_content in kpi_map:
+                    kpi_name = kpi_map[cell_content]
+                    break
             
-            # Ensure all 12 months are present
-            complete_values = {}
-            for month in ALL_MONTHS:
-                complete_values[month] = values.get(month, None)
-            
-            final_output[kpi][supplier_name] = complete_values
+            if kpi_name:
+                # Extract monthly data for this KPI
+                monthly_data = parse_monthly_data_from_row(row, data_start_col)
+                supplier_kpis[kpi_name] = monthly_data
+                print(f"  ✓ Extracted {kpi_name}: {sum(1 for v in monthly_data.values() if v is not None)} months of data")
 
-    # Write final JSON
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(final_output, f, indent=2)
+        # Add supplier KPIs to final output
+        for kpi_name, monthly_data in supplier_kpis.items():
+            if kpi_name not in final_output:
+                final_output[kpi_name] = {}
+            final_output[kpi_name][supplier_name] = monthly_data
 
-    print(f"✅ All supplier KPIs aggregated to {output_path}")
+        processed_count += 1
+
+    print(f"📊 Successfully processed {processed_count} suppliers")
+    
+    # Save the output
+    try:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(final_output, f, indent=2)
+        print(f"✅ Saved KPI data to: {output_path}")
+    except Exception as e:
+        print(f"❌ Failed to save KPI data: {e}")
+        return None
+
+    print(f"🎉 KPI processing completed - {processed_count} suppliers processed")
     return final_output
