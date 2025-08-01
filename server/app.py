@@ -1,214 +1,189 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import shutil
 import os
 import json
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import openpyxl
-import time
-from sheet_insights.parser import extract_markdown, get_sheet_names
+import re
+
+from sheet_insights.parser import extract_csv, get_sheet_names, normalize_sheet_name
 from sheet_insights.insights import get_insights
 from sheet_insights.general_summary import generate_general_insights
-from sheet_insights.additional_insights import generate_additional_insights
 from sheet_insights.kpi_dashboard import get_all_supplier_kpi_json
 
 app = FastAPI()
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 UPLOAD_DIR = Path('uploads')
-MARKDOWN_DIR = Path("results/markdown_output")
+CSV_DIR = Path("results/csv_output")
 INSIGHTS_FILE = Path('results/insights.json')
-GENERAL_INSIGHTS_FILE = Path('results/general-info.json')
-ADDITIONAL_INSIGHTS_FILE = Path('results/additional-insights.json')
 RESULTS_DIR = Path('results')
 OUTPUT_JSON = Path("results/final_supplier_kpis.json")
-uploaded_file = next(Path(UPLOAD_DIR).glob("*.xlsx"))
 
-
-for folder in [UPLOAD_DIR, MARKDOWN_DIR, RESULTS_DIR]:
+for folder in [UPLOAD_DIR, CSV_DIR, RESULTS_DIR]:
     folder.mkdir(parents=True, exist_ok=True)
+
+def normalize_filename(sheet_name: str) -> str:
+    """Use consistent normalization with parser.py"""
+    return normalize_sheet_name(sheet_name) + ".csv"
 
 @app.get("/")
 def read_root():
     return RedirectResponse(url='/docs')
-
-
 
 @app.post("/upload_excel/")
 async def upload_excel(file: UploadFile = File(...)):
     if not file.filename.endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Only .xlsx files are supported.")
 
-    # Save uploaded file
     file_path = UPLOAD_DIR / file.filename
     with open(file_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
 
-    print(f"📁 Uploaded file: {file.filename}")
-
+    print(f"📁 Uploaded file saved: {file_path.name}")
 
     try:
-        # Get all sheet names for validation
         all_sheet_names = get_sheet_names(str(file_path))
         if not all_sheet_names:
             raise HTTPException(status_code=400, detail="No sheets found in the Excel file")
+
+        print(f"📋 All sheets found in Excel: {all_sheet_names}")
+
+        # Define excluded sheets
+        excluded_sheets = ['Average Summary', 'Analysis SUMMARY']
+        sheets_to_process = [sheet for sheet in all_sheet_names if sheet.strip() not in excluded_sheets]
+
+        print(f"📌 Sheets selected for processing: {sheets_to_process}")
         
-        print(f"📋 Found sheets: {all_sheet_names}")
+        # Check if we have any sheets to process
+        if not sheets_to_process:
+            print("⚠️ WARNING: No sheets available for processing after exclusions")
+            print(f"   All sheets: {all_sheet_names}")
+            print(f"   Excluded: {excluded_sheets}")
+            raise HTTPException(
+                status_code=400, 
+                detail=f"No processable sheets found. Available sheets: {all_sheet_names}. Excluded: {excluded_sheets}"
+            )
 
-        # Skip first two sheets: "Average Summary" and "Analysis SUMMARY"
-        if len(all_sheet_names) > 2:
-            print(f"📋 Skipping first two sheets: '{all_sheet_names[0]}' and '{all_sheet_names[1]}'")
-            sheets_to_process = all_sheet_names[2:]
-        elif len(all_sheet_names) > 1:
-            print(f"📋 Skipping first sheet: '{all_sheet_names[0]}'")
-            sheets_to_process = all_sheet_names[1:]
-        else:
-            print(f"📋 Processing single sheet: '{all_sheet_names[0]}'")
-            sheets_to_process = all_sheet_names
-
-        print(f"🔄 Sheets to process: {sheets_to_process}")
-
-        markdown_paths, name_mapping = extract_markdown(
-            str(file_path),
-            MARKDOWN_DIR,
-            sheets_to_process=sheets_to_process,
-            skip_first_sheet=False,
-            max_empty_rows=3  # ← New parameter to control empty row limit
-        )
-
-        if not markdown_paths:
-            raise HTTPException(status_code=400, detail="No sheets could be processed")
-
-        print(f"📝 Generated {len(markdown_paths)} markdown files")
-        print(f"🗺️ Name mapping: {name_mapping}")
-
-        get_all_supplier_kpi_json()
-        # Process each sheet for insights with optimized parallel processing
-        def process_sheet(markdown_file):
-            try:
-                start_time = time.time()
-
-                with open(markdown_file, "r", encoding="utf-8") as f:
-                    text = f.read()
-
-                # Get the original sheet name from mapping
-                clean_name = markdown_file.stem
-                original_sheet_name = name_mapping.get(clean_name, clean_name)
-
-                print(f"🔍 Processing insights for: '{original_sheet_name}' (file: {markdown_file.name})")
-
-                # Generate insights using original sheet name
-                insight = get_insights(text, original_sheet_name)
-
-                processing_time = time.time() - start_time
-                print(f"⏱️ Processed '{original_sheet_name}' in {processing_time:.2f}s")
-
-                return original_sheet_name, insight
-
-            except Exception as e:
-                print(f"❌ Error processing {markdown_file.name}: {e}")
-                return name_mapping.get(markdown_file.stem, markdown_file.stem), None
-
-        insights = {}
-        print(f"🚀 Starting insight generation for {len(markdown_paths)} sheets...")
-
-        optimal_workers = min(4, len(markdown_paths)) 
-
-        print(f"🔧 Using {optimal_workers} parallel workers for processing")
-
-        start_time = time.time()
-
-        with ThreadPoolExecutor(max_workers=optimal_workers) as executor:
-            # Submit all tasks and track progress
-            future_to_file = {executor.submit(process_sheet, file): file for file in markdown_paths}
-            results = []
-
-            # Process completed tasks as they finish
-            for i, future in enumerate(as_completed(future_to_file), 1):
-                try:
-                    result = future.result()
-                    results.append(result)
-                    print(f"📈 Progress: {i}/{len(markdown_paths)} sheets processed")
-                except Exception as e:
-                    file = future_to_file[future]
-                    print(f"❌ Error processing {file.name}: {e}")
-                    results.append((name_mapping.get(file.stem, file.stem), None))
-
-        total_time = time.time() - start_time
-        print(f"⏱️ Total processing time: {total_time:.2f}s")
-
-        # Collect results
-        processed_count = 0
-        for sheet_name, insight in results:
-            if insight:
-                insights[sheet_name] = insight
-                processed_count += 1
-                print(f"✅ Generated insights for: '{sheet_name}'")
+        # Check for existing CSV files with proper debugging
+        existing_csv_files = []
+        missing_csv_files = []
+        
+        for sheet in sheets_to_process:
+            csv_path = CSV_DIR / normalize_filename(sheet)
+            if csv_path.exists():
+                existing_csv_files.append(sheet)
+                print(f"✅ Found existing CSV: {csv_path}")
             else:
-                print(f"❌ Failed to generate insights for: '{sheet_name}'")
+                missing_csv_files.append(sheet)
+                print(f"❌ Missing CSV: {csv_path}")
 
-        print(f"📊 Successfully generated insights for {processed_count}/{len(results)} sheets")
+        print(f"📊 Existing CSV files: {len(existing_csv_files)}")
+        print(f"🔨 Missing CSV files: {len(missing_csv_files)}")
 
-        # Save insights to file
+        # Generate missing CSV files
+        if missing_csv_files:
+            print(f"🛠️ Generating CSV files for sheets: {missing_csv_files}")
+            csv_paths, name_mapping = extract_csv(
+                str(file_path),
+                CSV_DIR,
+                sheets_to_process=missing_csv_files,
+                skip_first_sheet=False,
+            )
+            
+            # Verify CSV files were actually created
+            actual_csv_paths = [path for path in csv_paths if path.exists()]
+            print(f"✅ Successfully generated CSV files: {[p.name for p in actual_csv_paths]}")
+            
+            if len(actual_csv_paths) == 0:
+                print("❌ ERROR: No CSV files were generated despite processing sheets")
+                raise HTTPException(
+                    status_code=500, 
+                    detail="CSV generation failed - no files were created. This could be due to sheets having no meaningful content."
+                )
+        else:
+            print("⏩ All CSV files already exist. Skipping generation.")
+            actual_csv_paths = []
+            name_mapping = {}
+
+        # Collect all available CSV files
+        all_csv_paths = []
+        for sheet in sheets_to_process:
+            csv_path = CSV_DIR / normalize_filename(sheet)
+            if csv_path.exists():
+                all_csv_paths.append(csv_path)
+
+        print(f"📦 Total CSV files available for processing: {len(all_csv_paths)}")
+        print(f"📂 CSV files: {[p.name for p in all_csv_paths]}")
+
+        if not all_csv_paths:
+            # Provide detailed error information
+            error_details = {
+                "total_sheets": len(all_sheet_names),
+                "excluded_sheets": excluded_sheets,
+                "sheets_to_process": sheets_to_process,
+                "csv_directory": str(CSV_DIR),
+                "expected_files": [normalize_filename(sheet) for sheet in sheets_to_process]
+            }
+            print(f"❌ DETAILED ERROR INFO: {error_details}")
+            
+            raise HTTPException(
+                status_code=400, 
+                detail=f"No CSV files available for processing. Details: {error_details}"
+            )
+
+        # Process KPIs and insights
+        print("📊 Generating supplier KPI data...")
+        supplier_kpi_info = get_all_supplier_kpi_json()
+        print("✅ Created final_supplier_kpis.json")
+
+        print("🧠 Generating insights...")
+        insights = get_insights()
         with open(INSIGHTS_FILE, "w", encoding='utf-8') as f:
             json.dump(insights, f, indent=2, ensure_ascii=False)
+        print(f"✅ Saved insights to: {INSIGHTS_FILE}")
 
-        print(f"💾 Saved insights to: {INSIGHTS_FILE}")
-
-        # Generate general insights
-        print(f"🔄 Generating general insights...")
-        general = generate_general_insights(str(INSIGHTS_FILE), str(GENERAL_INSIGHTS_FILE))
+        print("📈 Generating general insights...")
+        general = generate_general_insights()
 
         # Load insights for response
         with open(INSIGHTS_FILE, "r", encoding="utf-8") as f:
             insights_content = json.load(f)
 
-
-        print(f"🎉 Processing completed successfully!")
+        print("🎉 Processing completed successfully.")
 
         return {
-            "message": f"Successfully processed {len(sheets_to_process)} sheets",
-            "processed_sheets": list(insights.keys()),
             "insights": insights_content,
-            "general-insights": general
+            "general-insights": general,
+            "Supplier-KPIs": supplier_kpi_info
         }
 
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except Exception as e:
-        print(f"❌ Error during processing: {e}")
+        print(f"❌ Unexpected error during processing: {e}")
+        print(f"❌ Error type: {type(e).__name__}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
-
-@app.get('/download/supplier_kpi_file')
-def download_general():
-    if not OUTPUT_JSON.exists():
-        raise HTTPException(status_code=404, detail='KPI file not generated')
-    return FileResponse(path=OUTPUT_JSON, filename='supplier_kpi.json', media_type='application/json')
-
-
 
 if __name__ == "__main__":
     import uvicorn
 
     print("🚀 Starting FastAPI server on port 8001...")
-    print("📍 Server will be available at: http://localhost:8001")
-    print("📖 API documentation available at: http://localhost:8001/docs")
-    print("🔄 Press Ctrl+C to stop the server")
-
-    # Run the server on port 8001
     uvicorn.run(
-        "app:app",  # Use import string for reload to work properly
+        "app:app",
         host="0.0.0.0",
         port=8001,
-        reload=True,  # Enable auto-reload for development
+        reload=True,
         log_level="info"
     )
-

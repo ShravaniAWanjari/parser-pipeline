@@ -1,217 +1,133 @@
+import openpyxl
+import csv
 import re
 from pathlib import Path
-import openpyxl
-from markitdown import MarkItDown
+
+def normalize_sheet_name(sheet_name: str) -> str:
+    """Consistent sheet name normalization used across the application"""
+    clean_name = re.sub(r'[^\w\-_]', '_', sheet_name.strip())
+    clean_name = re.sub(r'_+', '_', clean_name).strip('_')
+    return clean_name
 
 def get_sheet_names(file_path):
-    """Extract all sheet names from Excel file"""
     try:
         workbook = openpyxl.load_workbook(file_path, read_only=True)
         names = workbook.sheetnames
         workbook.close()
-        print(f"📋 Found {len(names)} sheets: {names}")
+        print(f"Found {len(names)} sheets: {names}")
         return names
     except Exception as e:
-        print(f"❌ Failed to load sheet names: {e}")
+        print(f"Failed to load sheet names: {e}")
         return []
 
-def format_metadata(sheet):
-    """Extract and format metadata from the top few rows of the Excel sheet"""
-    metadata = []
-    for row in sheet.iter_rows(min_row=1, max_row=5, values_only=True):
-        line = ' '.join([str(cell).strip() for cell in row if cell])
-        if line:
-            metadata.append(line)
-    return metadata
-
 def is_empty_row(row):
-    """Check if a row is essentially empty (all None, empty strings, or whitespace)"""
     return all(cell is None or str(cell).strip() == '' for cell in row)
 
 def has_meaningful_content(row):
-    """Check if row has meaningful content (not just formulas or minimal data)"""
     non_empty_cells = [cell for cell in row if cell is not None and str(cell).strip()]
-    
-    # If less than 2 non-empty cells, consider it not meaningful
     if len(non_empty_cells) < 2:
         return False
-    
-    # Check if it's just formulas without actual data
     formula_only = all(str(cell).startswith('=') for cell in non_empty_cells)
-    if formula_only and len(non_empty_cells) < 3:
-        return False
-    
-    return True
+    return not (formula_only and len(non_empty_cells) < 3)
 
 def find_data_boundaries(sheet, start_row=6):
-    """Find the actual data boundaries to avoid processing too many empty rows"""
     rows = list(sheet.iter_rows(min_row=start_row, values_only=True))
-    
-    # Find last row with meaningful content
     last_meaningful_row = -1
     for i, row in enumerate(rows):
         if has_meaningful_content(row):
             last_meaningful_row = i
-    
-    # If we found meaningful content, include a few extra rows for spacing
-    if last_meaningful_row >= 0:
-        return rows[:last_meaningful_row + 4]  # +4 to allow 3-4 empty rows after data
-    else:
-        # If no meaningful content found, return first 10 rows as fallback
-        return rows[:10]
+    return rows[:last_meaningful_row + 4] if last_meaningful_row >= 0 else rows[:10]
 
-def extract_table(sheet):
-    """Extract and format the core table starting from a specific row"""
-    start_row = 6  # Adjust based on where your actual data starts
-    
-    # Get bounded rows instead of all rows
-    rows = find_data_boundaries(sheet, start_row)
-    
-    if not rows:
-        return []
-    
-    # Find max number of columns from non-empty rows
-    non_empty_rows = [row for row in rows if not is_empty_row(row)]
-    if not non_empty_rows:
-        return []
-    
-    max_cols = max(len(row) for row in non_empty_rows)
-    
-    # Process rows and remove consecutive empty rows (keep max 3-4)
-    processed_rows = []
-    consecutive_empty = 0
-    max_consecutive_empty = 3
-    
-    for row in rows:
-        # Pad row to match max columns
-        padded_row = list(row) + [None] * (max_cols - len(row))  # Use None instead of ''
-        
-        if is_empty_row(padded_row):
-            consecutive_empty += 1
-            if consecutive_empty <= max_consecutive_empty:
-                processed_rows.append(padded_row)
-        else:
-            consecutive_empty = 0
-            processed_rows.append(padded_row)
-    
-    # Convert to markdown
-    markdown_lines = []
-    for i, row in enumerate(processed_rows):
-        # Clean cell content
-        cells = []
-        for cell in row:
-            if cell is None or cell == '':
-                cells.append('null')  # Use 'null' string for empty cells
-            else:
-                # Clean the cell content
-                cell_str = str(cell).replace('\n', ' ').strip()
-                # Handle Excel errors
-                if cell_str.startswith('#') or cell_str == '#DIV/0!':
-                    cells.append('null')  # Convert Excel errors to null
-                # Truncate very long formula strings
-                elif cell_str.startswith('=') and len(cell_str) > 50:
-                    cells.append('null')  # Convert long formulas to null
-                else:
-                    cells.append(cell_str)
-        
-        line = '| ' + ' | '.join(cells) + ' |'
-        markdown_lines.append(line)
-        
-        # Add header separator after first row if it seems like a header
-        if i == 0 and has_meaningful_content(row):
-            markdown_lines.append('| ' + ' | '.join(['---'] * len(cells)) + ' |')
-    
-    return markdown_lines
-
-def clean_markdown_post_process(markdown_path, max_empty_lines=3):
-    """Post-process markdown file to remove excessive empty table rows"""
-    try:
-        with open(markdown_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-        
-        cleaned_lines = []
-        consecutive_empty_table_rows = 0
-        
-        for line in lines:
-            # Check if line is an empty table row (only | and spaces/empty cells)
-            stripped = line.strip()
-            if stripped.startswith('|') and stripped.endswith('|'):
-                # Remove outer pipes and split
-                content = stripped[1:-1].split('|')
-                # Check if all cells are empty or just whitespace
-                if all(cell.strip() == '' for cell in content):
-                    consecutive_empty_table_rows += 1
-                    if consecutive_empty_table_rows <= max_empty_lines:
-                        cleaned_lines.append(line)
-                    # Skip this line if we've exceeded the limit
-                else:
-                    consecutive_empty_table_rows = 0
-                    cleaned_lines.append(line)
-            else:
-                consecutive_empty_table_rows = 0
-                cleaned_lines.append(line)
-        
-        # Write back the cleaned content
-        with open(markdown_path, 'w', encoding='utf-8') as f:
-            f.writelines(cleaned_lines)
-        
-        print(f"🧹 Cleaned excessive empty rows from {markdown_path.name}")
-        
-    except Exception as e:
-        print(f"⚠️ Failed to clean {markdown_path}: {e}")
-
-def extract_markdown(file_path, output_dir, sheets_to_process=None, skip_first_sheet=True, max_empty_rows=3):
+def extract_csv(file_path, output_dir, sheets_to_process=None, skip_first_sheet=True):
     all_sheet_names = get_sheet_names(file_path)
     if not all_sheet_names:
+        print("❌ No sheets found in Excel file")
         return [], {}
 
-    # Decide which sheets to process
-    if sheets_to_process:
-        target_sheets = sheets_to_process
-    else:
-        # Skip the first sheet if requested
-        target_sheets = all_sheet_names[1:] if skip_first_sheet else all_sheet_names
+    target_sheets = sheets_to_process if sheets_to_process else (
+        all_sheet_names[1:] if skip_first_sheet else all_sheet_names
+    )
 
-    print(f"📋 Processing {len(target_sheets)} sheet(s): {target_sheets}")
+    print(f"Processing {len(target_sheets)} sheet(s): {target_sheets}")
 
-    markdown_paths = []
+    workbook = openpyxl.load_workbook(file_path, read_only=True)
+    csv_paths = []
     name_mapping = {}
 
-    md = MarkItDown(enable_plugins=False)
-    result = md.convert(str(file_path))
-    text = result.text_content
+    # Create a mapping of exact sheet names for better matching
+    exact_sheet_names = {sheet.strip(): sheet for sheet in workbook.sheetnames}
+    
+    for sheet_name in target_sheets:
+        try:
+            print(f"🔄 Processing sheet: '{sheet_name}'")
+            
+            # Try to find the exact sheet in workbook
+            actual_sheet_name = None
+            if sheet_name in workbook.sheetnames:
+                actual_sheet_name = sheet_name
+            elif sheet_name.strip() in exact_sheet_names:
+                actual_sheet_name = exact_sheet_names[sheet_name.strip()]
+            else:
+                # Try to find by stripped comparison
+                for wb_sheet in workbook.sheetnames:
+                    if wb_sheet.strip() == sheet_name.strip():
+                        actual_sheet_name = wb_sheet
+                        break
+            
+            if not actual_sheet_name:
+                print(f"❌ Sheet '{sheet_name}' not found in workbook")
+                print(f"   Available sheets: {workbook.sheetnames}")
+                continue
+                
+            print(f"   Using actual sheet name: '{actual_sheet_name}'")
+            sheet = workbook[actual_sheet_name]
+            
+            
+            rows = find_data_boundaries(sheet, start_row=6)
+            non_empty_rows = [row for row in rows if not is_empty_row(row)]
+            
+            if not non_empty_rows:
+                print(f"⚠️ No meaningful content found in sheet: {sheet_name}")
+                continue
 
-    # Use regex to find all sheet headings (e.g., "# SheetName" or "## SheetName")
-    sheet_heading_pattern = re.compile(r"^(#+)\s*(.+)$")
-    current_sheet = None
-    current_lines = []
-    for line in text.splitlines():
-        match = sheet_heading_pattern.match(line)
-        if match:
-            # Save previous sheet if any, but only if it's in target_sheets
-            if current_sheet and current_lines and current_sheet in target_sheets:
-                clean_sheet_name = re.sub(r'[^\w\-_]', '_', current_sheet.strip())
-                clean_sheet_name = re.sub(r'_+', '_', clean_sheet_name).strip('_')
-                markdown_path = output_dir / f"{clean_sheet_name}.md"
-                with open(markdown_path, "w", encoding="utf-8") as f:
-                    f.write("\n".join(current_lines))
-                markdown_paths.append(markdown_path)
-                name_mapping[clean_sheet_name] = current_sheet
-            # Start new sheet
-            current_sheet = match.group(2)
-            current_lines = [line]
-        else:
-            if current_lines is not None:
-                current_lines.append(line)
-    # Save last sheet if it's in target_sheets
-    if current_sheet and current_lines and current_sheet in target_sheets:
-        clean_sheet_name = re.sub(r'[^\w\-_]', '_', current_sheet.strip())
-        clean_sheet_name = re.sub(r'_+', '_', clean_sheet_name).strip('_')
-        markdown_path = output_dir / f"{clean_sheet_name}.md"
-        with open(markdown_path, "w", encoding="utf-8") as f:
-            f.write("\n".join(current_lines))
-        markdown_paths.append(markdown_path)
-        name_mapping[clean_sheet_name] = current_sheet
+            max_cols = max(len(row) for row in non_empty_rows)
+            clean_name = normalize_sheet_name(sheet_name)
+            csv_path = output_dir / f"{clean_name}.csv"
 
-    print(f"✅ Saved {len(markdown_paths)} markdown files using MarkItDown")
-    return markdown_paths, name_mapping
+            with open(csv_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.writer(f)
+                for row in rows:
+                    padded_row = list(row) + [None] * (max_cols - len(row))
+                    cleaned = [
+                        '' if cell is None or str(cell).strip() == '' else str(cell).strip()
+                        for cell in padded_row
+                    ]
+                    writer.writerow(cleaned)
+
+            csv_paths.append(csv_path)
+            name_mapping[clean_name] = actual_sheet_name  # Use the actual sheet name found
+            print(f"✅ Created CSV: {csv_path}")
+            
+        except KeyError as ke:
+            print(f"❌ Sheet '{sheet_name}' not found in workbook")
+            print(f"   Available sheets: {workbook.sheetnames}")
+            # Try to find a close match
+            available_sheets = workbook.sheetnames
+            close_matches = [s for s in available_sheets if sheet_name.strip() in s or s in sheet_name.strip()]
+            if close_matches:
+                print(f"   Possible matches: {close_matches}")
+            continue
+        except Exception as e:
+            print(f"❌ Failed to process sheet {sheet_name}: {e}")
+            continue
+
+    workbook.close()
+    print(f"📁 Successfully saved {len(csv_paths)} CSV files")
+    
+    if not csv_paths:
+        print("⚠️ WARNING: No CSV files were generated. This could be due to:")
+        print("   - All sheets have no meaningful content")
+        print("   - All target sheets were excluded or not found")
+        print("   - Processing errors occurred for all sheets")
+    
+    return csv_paths, name_mapping
